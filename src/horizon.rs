@@ -37,3 +37,16 @@ impl HorizonClient {
                     .send()
                     .await
                     .map_err(|e| AppError::Upstream(e.to_string()))?;
+
+                if resp.status().is_success() {
+                    Ok(())
+                } else {
+                    Err(AppError::Upstream(format!(
+                        "horizon returned {}",
+                        resp.status()
+                    )))
+                }
+            })
+            .await
+    }
+}
