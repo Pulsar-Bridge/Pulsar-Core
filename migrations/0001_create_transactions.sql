@@ -47,3 +47,7 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
+CREATE TRIGGER transactions_set_updated_at
+    BEFORE UPDATE ON transactions
+    FOR EACH ROW EXECUTE FUNCTION set_updated_at();
