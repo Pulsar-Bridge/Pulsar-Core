@@ -91,3 +91,27 @@ impl Config {
                         "PARTITION_MAINTENANCE_INTERVAL_SECONDS must be a number".into(),
                     )
                 })?;
+
+        Ok(Self {
+            bind_addr,
+            database_url,
+            database_max_connections,
+            redis_url,
+            idempotency_ttl: Duration::from_secs(idempotency_ttl_secs),
+            horizon_base_url,
+            horizon_circuit_breaker_failure_threshold,
+            horizon_circuit_breaker_reset_after: Duration::from_secs(
+                horizon_circuit_breaker_reset_after_secs,
+            ),
+            contract_rpc_url,
+            relay_signer_secret,
+            admin_api_keys,
+            tenant_api_keys,
+            rate_limit_per_minute,
+            partition_retention_months,
+            partition_maintenance_interval: Duration::from_secs(
+                partition_maintenance_interval_secs,
+            ),
+        })
+    }
+}
