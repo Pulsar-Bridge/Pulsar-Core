@@ -93,3 +93,8 @@ fn build_router(state: AppState) -> Router {
             state.clone(),
             middleware::auth::admin_auth,
         ));
+
+    let public_routes = Router::new()
+        .route("/healthz", get(handlers::health::healthz))
+        .route("/readyz", get(handlers::health::readyz))
+        .route("/metrics", get(handlers::health::metrics));
