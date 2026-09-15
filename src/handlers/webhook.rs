@@ -141,3 +141,17 @@ async fn insert_and_submit(
             stellar_account: record.stellar_account.clone(),
         })
         .await;
+
+    let mut tx = db::begin_tenant_scoped(&state.db, tenant.tenant_id).await?;
+    let (status, contract_tx_hash) = match register_result {
+        Ok(tx_hash) => {
+            transactions::mark_submitted(&mut tx, record.id, record.created_at, &tx_hash).await?;
+            ("submitted", Some(tx_hash))
+        }
+        Err(err) => {
+            tracing::error!(error = %err, deposit_id = %record.id, "register_callback failed");
+            transactions::mark_failed(&mut tx, record.id, record.created_at).await?;
+            ("failed", None)
+        }
+    };
+    tx.commit().await.map_err(AppError::Database)?;
