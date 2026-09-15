@@ -44,3 +44,5 @@ async fn main() -> anyhow::Result<()> {
         config.partition_retention_months,
         config.partition_maintenance_interval,
     );
+
+    let idempotency = IdempotencyStore::connect(&config.redis_url, config.idempotency_ttl).await?;
