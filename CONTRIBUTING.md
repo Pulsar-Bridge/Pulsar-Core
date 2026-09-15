@@ -37,3 +37,6 @@ cp .env.example .env.development   # already checked in; edit if you need differ
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis
 cargo run
 ```
+
+Migrations run automatically on startup via `sqlx::migrate!`. To add a new
+one:
