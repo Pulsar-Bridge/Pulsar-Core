@@ -17,3 +17,11 @@ export const options = {
     },
   },
 };
+
+export default function () {
+  const payload = JSON.stringify({
+    external_deposit_id: uuidv4(),
+    amount: '10.5000000',
+    asset_code: 'USD',
+    stellar_account: 'G' + 'A'.repeat(55),
+  });
