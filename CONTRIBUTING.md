@@ -31,3 +31,9 @@ endpoint:
       README is updated in the same PR.
 
 ## Local setup
+
+```
+cp .env.example .env.development   # already checked in; edit if you need different local ports
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis
+cargo run
+```
