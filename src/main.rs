@@ -52,3 +52,10 @@ async fn main() -> anyhow::Result<()> {
         config.horizon_circuit_breaker_failure_threshold,
         config.horizon_circuit_breaker_reset_after,
     );
+
+    let contracts: Arc<dyn contracts::ContractClient> = Arc::new(SorobanContractClient::new(
+        config.contract_rpc_url.clone(),
+        config.relay_signer_secret.clone(),
+        config.horizon_circuit_breaker_failure_threshold,
+        config.horizon_circuit_breaker_reset_after,
+    ));
