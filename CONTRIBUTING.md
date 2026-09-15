@@ -29,3 +29,5 @@ endpoint:
       first — see the top of `CLAUDE.md.pulsar-core`.
 - [ ] If this PR closes a README "Under Development"/"Planned" item, the
       README is updated in the same PR.
+
+## Local setup
