@@ -120,3 +120,15 @@ mod tests {
         let result = cb.call(|| async { Ok::<_, AppError>(()) }).await;
         assert!(matches!(result, Err(AppError::CircuitOpen(_))));
     }
+
+    #[tokio::test]
+    async fn success_resets_failure_count() {
+        let cb = CircuitBreaker::new("horizon", 2, Duration::from_secs(60));
+        assert!(cb
+            .call(|| async { Err::<(), _>(AppError::Upstream("boom".into())) })
+            .await
+            .is_err());
+        assert!(cb.call(|| async { Ok::<_, AppError>(()) }).await.is_ok());
+        assert_eq!(cb.state(), State::Closed);
+    }
+}
