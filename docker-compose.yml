@@ -1,3 +1,20 @@
 # Base topology: postgres, redis, and the relay. Environment-specific
 # compose files extend this one — don't duplicate it, run e.g.:
 #   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      POSTGRES_DB: ${POSTGRES_DB:-pulsar_core}
+      PULSAR_APP_PASSWORD: ${PULSAR_APP_PASSWORD:?PULSAR_APP_PASSWORD is required}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/db/init-roles.sh:/docker-entrypoint-initdb.d/init-roles.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-pulsar_core}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
