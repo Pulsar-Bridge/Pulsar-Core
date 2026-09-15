@@ -181,3 +181,9 @@ mod tests {
         overrides(&mut p);
         p
     }
+
+    #[test]
+    fn accepts_valid_payload() {
+        let p = payload(|_| {});
+        assert!(validate(&p).is_ok());
+    }
