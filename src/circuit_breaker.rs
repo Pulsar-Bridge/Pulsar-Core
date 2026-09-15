@@ -110,3 +110,9 @@ mod tests {
             .await
             .is_err());
         assert_eq!(cb.state(), State::Closed);
+
+        assert!(cb
+            .call(|| async { Err::<(), _>(AppError::Upstream("boom".into())) })
+            .await
+            .is_err());
+        assert_eq!(cb.state(), State::Open);
