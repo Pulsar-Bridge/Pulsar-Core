@@ -26,3 +26,10 @@ pub struct WebhookPayload {
     #[serde(flatten)]
     pub extra: serde_json::Value,
 }
+
+#[derive(Serialize)]
+pub struct WebhookResponse {
+    pub id: uuid::Uuid,
+    pub status: String,
+    pub contract_tx_hash: Option<String>,
+}
