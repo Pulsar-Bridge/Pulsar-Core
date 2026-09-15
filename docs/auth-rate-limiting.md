@@ -19,3 +19,13 @@ limited the same way:
    comparison timing.
 
 ## What this does not yet do
+
+- Rate limiting is in-process (per replica), not shared across replicas via
+  Redis. Under `docker-compose.load.yml`'s 3 replicas, the effective limit is
+  roughly `3 * RATE_LIMIT_PER_MINUTE`. If that's not acceptable, move the
+  limiter state into Redis (`governor` supports a custom clock/store, or use
+  a Lua-scripted token bucket directly).
+- API keys live in `TENANT_API_KEYS`/`ADMIN_API_KEYS` env vars, not a
+  database table, so rotation requires a redeploy. See
+  `docs/quota-configuration.md` for the natural next step (a `tenants`/
+  `api_keys` table with per-tenant quotas) if that becomes a blocker.
