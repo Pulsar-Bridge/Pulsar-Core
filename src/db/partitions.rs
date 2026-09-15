@@ -37,3 +37,6 @@ pub async fn run_once(pool: &PgPool, retention_months: u32) -> AppResult<()> {
             "dropped retired transaction partitions"
         );
     }
+
+    Ok(())
+}
