@@ -24,3 +24,7 @@ pub struct Config {
     pub partition_retention_months: u32,
     pub partition_maintenance_interval: Duration,
 }
+
+impl Config {
+    pub fn from_env() -> AppResult<Self> {
+        let _ = dotenvy::dotenv();
