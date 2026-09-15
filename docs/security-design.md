@@ -62,3 +62,5 @@ structurally impossible, not just discouraged by convention.
    repo. That was the second half of the original bug (`/reconnect`): don't
    leave security-relevant code unwired "for later" — delete it until it's
    actually needed and can be reviewed wired-in.
+
+## What to check before merging any DB/connection-string change
