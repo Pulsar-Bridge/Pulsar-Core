@@ -35,3 +35,6 @@ cp .env.development .env   # dev defaults; see .env.example for the full var lis
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis
 cargo run
 ```
+
+Migrations run automatically on startup. See `CONTRIBUTING.md` for the full
+PR checklist (`cargo fmt`, `clippy`, `build`, `test`) and local dev loop.
