@@ -18,3 +18,6 @@ pub enum AppError {
 
     #[error("invalid request payload: {0}")]
     InvalidPayload(String),
+
+    #[error("missing idempotency key")]
+    MissingIdempotencyKey,
