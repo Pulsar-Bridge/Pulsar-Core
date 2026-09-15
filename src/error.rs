@@ -27,3 +27,6 @@ pub enum AppError {
 
     #[error("unauthorized")]
     Unauthorized,
+
+    #[error("rate limit exceeded")]
+    RateLimited,
