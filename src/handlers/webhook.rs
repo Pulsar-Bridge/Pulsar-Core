@@ -94,3 +94,12 @@ pub async fn handle(
 
     insert_result
 }
+
+async fn insert_and_submit(
+    state: &AppState,
+    tenant: TenantContext,
+    idempotency_key: &str,
+    payload: &WebhookPayload,
+    amount: BigDecimal,
+) -> AppResult<(StatusCode, Json<WebhookResponse>)> {
+    let mut tx = db::begin_tenant_scoped(&state.db, tenant.tenant_id).await?;
