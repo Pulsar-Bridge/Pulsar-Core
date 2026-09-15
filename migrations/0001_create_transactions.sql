@@ -74,3 +74,24 @@ BEGIN
     END IF;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION drop_transactions_partitions_older_than(p_cutoff date)
+RETURNS TABLE(dropped_partition text) LANGUAGE plpgsql AS $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN
+        SELECT c.relname
+        FROM pg_inherits i
+        JOIN pg_class c ON c.oid = i.inhrelid
+        JOIN pg_class p ON p.oid = i.inhparent
+        WHERE p.relname = 'transactions'
+          AND c.relname ~ '^transactions_\d{4}_\d{2}$'
+          AND to_date(substring(c.relname from 'transactions_(\d{4}_\d{2})$'), 'YYYY_MM') < p_cutoff
+    LOOP
+        EXECUTE format('DROP TABLE IF EXISTS %I', rec.relname);
+        dropped_partition := rec.relname;
+        RETURN NEXT;
+    END LOOP;
+END;
+$$;
