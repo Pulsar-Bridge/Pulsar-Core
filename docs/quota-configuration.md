@@ -16,3 +16,5 @@ write endpoint at all yet, precisely to avoid re-introducing an unwired,
 untested one. Build the read path and the enforcement path together with any
 future write path, in the same PR, per the "no dead code paths" rule in
 `docs/security-design.md`.
+
+## Natural next step, when per-tenant quotas are needed
