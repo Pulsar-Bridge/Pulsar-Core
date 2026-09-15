@@ -77,3 +77,17 @@ pub async fn mark_submitted(
     .map_err(AppError::Database)?;
     Ok(())
 }
+
+pub async fn mark_failed(
+    tx: &mut Transaction<'_, Postgres>,
+    id: Uuid,
+    created_at: DateTime<Utc>,
+) -> AppResult<()> {
+    sqlx::query("UPDATE transactions SET status = 'failed' WHERE id = $1 AND created_at = $2")
+        .bind(id)
+        .bind(created_at)
+        .execute(&mut **tx)
+        .await
+        .map_err(AppError::Database)?;
+    Ok(())
+}
