@@ -64,3 +64,11 @@ async fn main() -> anyhow::Result<()> {
     let state = AppState::new(config, db, idempotency, horizon, contracts)?;
 
     let app = build_router(state);
+
+    tracing::info!(%bind_addr, "starting pulsar-core");
+    let listener = tokio::net::TcpListener::bind(bind_addr).await?;
+    axum::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await?;
