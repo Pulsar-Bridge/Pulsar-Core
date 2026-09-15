@@ -30,3 +30,6 @@ pub enum AppError {
 
     #[error("rate limit exceeded")]
     RateLimited,
+
+    #[error("database error")]
+    Database(#[from] sqlx::Error),
