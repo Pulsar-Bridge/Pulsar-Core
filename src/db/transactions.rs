@@ -30,3 +30,31 @@ pub struct NewDeposit {
     pub stellar_account: String,
     pub anchor_platform_payload: serde_json::Value,
 }
+
+/// Inserts a new deposit in `pending` status. Must be called on a transaction
+/// opened with `db::begin_tenant_scoped` so RLS scopes the insert to
+/// `new_deposit.tenant_id`.
+pub async fn insert_pending(
+    tx: &mut Transaction<'_, Postgres>,
+    new_deposit: NewDeposit,
+) -> AppResult<DepositTransaction> {
+    sqlx::query_as::<_, DepositTransaction>(
+        r#"
+        INSERT INTO transactions
+            (tenant_id, idempotency_key, external_deposit_id, status, amount,
+             asset_code, stellar_account, anchor_platform_payload)
+        VALUES ($1, $2, $3, 'pending', $4, $5, $6, $7)
+        RETURNING *
+        "#,
+    )
+    .bind(new_deposit.tenant_id)
+    .bind(new_deposit.idempotency_key)
+    .bind(new_deposit.external_deposit_id)
+    .bind(new_deposit.amount)
+    .bind(new_deposit.asset_code)
+    .bind(new_deposit.stellar_account)
+    .bind(new_deposit.anchor_platform_payload)
+    .fetch_one(&mut **tx)
+    .await
+    .map_err(AppError::Database)
+}
