@@ -99,3 +99,17 @@ pub async fn admin_auth(
 
     Ok(next.run(req).await)
 }
+
+/// Avoids leaking key length/content via early-exit string comparison
+/// timing.
+fn constant_time_eq(a: &str, b: &str) -> bool {
+    let (a, b) = (a.as_bytes(), b.as_bytes());
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (x, y) in a.iter().zip(b.iter()) {
+        diff |= x ^ y;
+    }
+    diff == 0
+}
