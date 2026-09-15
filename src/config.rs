@@ -57,3 +57,10 @@ impl Config {
                 })?;
         let contract_rpc_url = require_env("CONTRACT_RPC_URL")?;
         let relay_signer_secret = require_env("RELAY_SIGNER_SECRET")?;
+
+        let admin_api_keys = env_or("ADMIN_API_KEYS", "")
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .map(String::from)
+            .collect();
