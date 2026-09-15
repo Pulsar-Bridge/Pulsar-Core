@@ -207,3 +207,10 @@ mod tests {
         let p = payload(|p| p.amount = "-5".to_string());
         assert!(validate(&p).is_err());
     }
+
+    #[test]
+    fn rejects_malformed_stellar_account() {
+        let p = payload(|p| p.stellar_account = "not-a-key".to_string());
+        assert!(validate(&p).is_err());
+    }
+}
