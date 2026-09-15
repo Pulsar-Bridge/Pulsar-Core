@@ -64,3 +64,6 @@ structurally impossible, not just discouraged by convention.
    actually needed and can be reviewed wired-in.
 
 ## What to check before merging any DB/connection-string change
+
+See the PR checklist in `CONTRIBUTING.md` — it encodes this list as a
+merge-blocking checklist, not just prose here.
