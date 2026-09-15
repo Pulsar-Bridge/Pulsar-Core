@@ -75,3 +75,11 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 }
+
+fn build_router(state: AppState) -> Router {
+    let webhook_routes = Router::new()
+        .route("/webhook", post(handlers::webhook::handle))
+        .route_layer(from_fn_with_state(
+            state.clone(),
+            middleware::auth::api_key_auth,
+        ));
