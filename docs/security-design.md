@@ -27,3 +27,8 @@ structurally impossible, not just discouraged by convention.
    `.env*` file or connection string in this repo may ever reference. The
    bootstrap superuser is used exactly once, automatically, by Postgres's own
    `docker-entrypoint-initdb.d` hook — never by application code.
+
+2. **`FORCE ROW LEVEL SECURITY`, not just `ENABLE`.** `migrations/0001_create_transactions.sql`
+   forces RLS even for the owning role. `ENABLE ROW LEVEL SECURITY` alone
+   still lets the table owner bypass policies; `FORCE` closes that gap, so
+   owning the table isn't itself a bypass path.
