@@ -71,3 +71,16 @@ fn add_months(d: NaiveDate, months: i32) -> NaiveDate {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn add_months_handles_year_rollover() {
+        let d = NaiveDate::from_ymd_opt(2026, 12, 1).unwrap();
+        assert_eq!(
+            add_months(d, 1),
+            NaiveDate::from_ymd_opt(2027, 1, 1).unwrap()
+        );
+        assert_eq!(
+            add_months(d, -12),
+            NaiveDate::from_ymd_opt(2025, 12, 1).unwrap()
+        );
+    }
