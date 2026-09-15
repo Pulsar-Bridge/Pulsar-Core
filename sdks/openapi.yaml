@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: pulsar-core relay API
+  version: 0.1.0
+  description: >
+    Tracks exactly what's implemented and merged in src/handlers — see
+    CONTRIBUTING.md's PR checklist item requiring this file to be updated in
+    the same PR that ships an endpoint, not as a follow-up.
+servers:
+  - url: http://localhost:8080
+paths:
+  /webhook:
+    post:
+      summary: Stellar Anchor Platform deposit callback
+      security:
+        - tenantApiKey: []
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookPayload'
+      responses:
+        '200':
+          description: Idempotent replay of a previously processed deposit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+        '201':
+          description: Deposit accepted and processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResponse'
+        '400':
+          description: Missing idempotency key or invalid payload
+        '429':
+          description: Duplicate concurrent request, or rate limited
+        '502':
+          description: Upstream Horizon/contract call failed
+        '503':
+          description: Circuit breaker open
