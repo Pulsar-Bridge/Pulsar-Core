@@ -42,3 +42,9 @@ structurally impossible, not just discouraged by convention.
    tenant's rows by forgetting a `WHERE tenant_id = ...` clause, because
    there is no code path that queries `transactions` without first setting
    that scope.
+
+4. **`assert_not_rls_bypassing` fails the process at startup**, not the
+   request at runtime, if `DATABASE_URL` ever points at a role with
+   `rolsuper` or `rolbypassrls` set. See `src/config.rs`. This is the direct
+   fix for how the original bug went undetected: the app never checked, so a
+   correct RLS policy sat next to a connection that ignored it.
