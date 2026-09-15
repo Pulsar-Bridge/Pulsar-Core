@@ -130,3 +130,14 @@ async fn insert_and_submit(
     )
     .await?;
     tx.commit().await.map_err(AppError::Database)?;
+
+    let register_result = state
+        .contracts
+        .register_callback(RegisterCallbackRequest {
+            tenant_id: tenant.tenant_id.to_string(),
+            deposit_id: record.id.to_string(),
+            amount: record.amount.to_string(),
+            asset_code: record.asset_code.clone(),
+            stellar_account: record.stellar_account.clone(),
+        })
+        .await;
