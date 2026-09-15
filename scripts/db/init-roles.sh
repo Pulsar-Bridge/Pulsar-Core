@@ -16,3 +16,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
         END IF;
     END
     \$\$;
+
+    ALTER DATABASE "$POSTGRES_DB" OWNER TO pulsar_app;
+    GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO pulsar_app;
+EOSQL
