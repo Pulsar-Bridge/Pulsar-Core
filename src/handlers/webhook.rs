@@ -91,3 +91,6 @@ pub async fn handle(
             .release(&tenant_id_str, &idempotency_key)
             .await;
     }
+
+    insert_result
+}
