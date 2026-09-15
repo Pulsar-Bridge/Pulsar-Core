@@ -22,3 +22,10 @@ fn bearer_token(req: &Request) -> Option<&str> {
         .ok()?
         .strip_prefix("Bearer ")
 }
+
+fn client_ip(req: &Request) -> String {
+    req.extensions()
+        .get::<ConnectInfo<SocketAddr>>()
+        .map(|c| c.0.ip().to_string())
+        .unwrap_or_else(|| "unknown".to_string())
+}
