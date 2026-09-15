@@ -83,3 +83,13 @@ fn build_router(state: AppState) -> Router {
             state.clone(),
             middleware::auth::api_key_auth,
         ));
+
+    let admin_routes = Router::new()
+        .route(
+            "/admin/tenants/:tenant_id/transactions",
+            get(handlers::admin::list_transactions),
+        )
+        .route_layer(from_fn_with_state(
+            state.clone(),
+            middleware::auth::admin_auth,
+        ));
