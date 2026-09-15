@@ -155,3 +155,13 @@ async fn insert_and_submit(
         }
     };
     tx.commit().await.map_err(AppError::Database)?;
+
+    Ok((
+        StatusCode::CREATED,
+        Json(WebhookResponse {
+            id: record.id,
+            status: status.to_string(),
+            contract_tx_hash,
+        }),
+    ))
+}
