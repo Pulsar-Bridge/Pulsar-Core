@@ -44,3 +44,5 @@ PR checklist (`cargo fmt`, `clippy`, `build`, `test`) and local dev loop.
 Rust, axum, sqlx, Postgres 16 (time-partitioned `transactions`, RLS-enforced
 tenant isolation), Redis (idempotency), a Stellar Horizon client with a
 circuit breaker.
+
+## Docs
