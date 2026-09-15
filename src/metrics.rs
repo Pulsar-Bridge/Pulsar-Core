@@ -20,3 +20,10 @@ impl Counter {
         self.0.load(Ordering::Relaxed)
     }
 }
+
+pub static IDEMPOTENCY_HITS: Counter = Counter::new();
+pub static IDEMPOTENCY_MISSES: Counter = Counter::new();
+pub static PARTITION_JOB_RUNS: Counter = Counter::new();
+pub static PARTITION_JOB_FAILURES: Counter = Counter::new();
+pub static CIRCUIT_BREAKER_OPENS: Counter = Counter::new();
+pub static AUTH_FAILURES: Counter = Counter::new();
