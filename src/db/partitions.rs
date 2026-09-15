@@ -60,3 +60,10 @@ pub fn spawn_background_job(pool: PgPool, retention_months: u32, tick: Duration)
 fn first_of_month(d: NaiveDate) -> NaiveDate {
     NaiveDate::from_ymd_opt(d.year(), d.month(), 1).expect("valid date")
 }
+
+fn add_months(d: NaiveDate, months: i32) -> NaiveDate {
+    let total = d.year() * 12 + (d.month() as i32 - 1) + months;
+    let year = total.div_euclid(12);
+    let month = total.rem_euclid(12) + 1;
+    NaiveDate::from_ymd_opt(year, month as u32, 1).expect("valid date")
+}
