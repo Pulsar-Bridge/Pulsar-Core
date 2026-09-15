@@ -26,3 +26,10 @@ pub async fn readyz(State(state): State<AppState>) -> impl IntoResponse {
     let horizon_breaker_ok = state.horizon.breaker_state() != BreakerState::Open;
     let horizon_ok = horizon_breaker_ok && state.horizon.ping().await.is_ok();
     let contract_breaker_ok = state.contracts.breaker_state() != BreakerState::Open;
+
+    let ok = db_ok && redis_ok && horizon_ok && contract_breaker_ok;
+    let status = if ok {
+        StatusCode::OK
+    } else {
+        StatusCode::SERVICE_UNAVAILABLE
+    };
