@@ -17,3 +17,5 @@ limited the same way:
 3. `admin_auth` compares candidate keys with a constant-time comparison
    (`constant_time_eq`) to avoid leaking key content via early-exit string
    comparison timing.
+
+## What this does not yet do
