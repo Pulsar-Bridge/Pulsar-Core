@@ -106,3 +106,16 @@ pub async fn list_for_tenant(
     .await
     .map_err(AppError::Database)
 }
+
+pub async fn find_by_idempotency_key(
+    tx: &mut Transaction<'_, Postgres>,
+    idempotency_key: &str,
+) -> AppResult<Option<DepositTransaction>> {
+    sqlx::query_as::<_, DepositTransaction>(
+        "SELECT * FROM transactions WHERE idempotency_key = $1 LIMIT 1",
+    )
+    .bind(idempotency_key)
+    .fetch_optional(&mut **tx)
+    .await
+    .map_err(AppError::Database)
+}
