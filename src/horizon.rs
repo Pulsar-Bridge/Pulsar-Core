@@ -21,3 +21,7 @@ impl HorizonClient {
             breaker: CircuitBreaker::new("horizon", failure_threshold, reset_after),
         }
     }
+
+    pub fn breaker_state(&self) -> crate::circuit_breaker::State {
+        self.breaker.state()
+    }
