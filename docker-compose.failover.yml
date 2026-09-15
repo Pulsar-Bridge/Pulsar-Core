@@ -1,0 +1,7 @@
+# Adds a streaming-replication standby and a second app instance pointed at
+# it via .env.example.failover, so failover behavior (the app's DB pool
+# reconnecting, the circuit breaker tripping on a degraded primary) can be
+# exercised locally. This is a minimal example for local testing, not a
+# production failover solution — a real deployment needs an orchestrator
+# (e.g. Patroni) to handle actual promotion; this compose file does not
+# automate promotion.
