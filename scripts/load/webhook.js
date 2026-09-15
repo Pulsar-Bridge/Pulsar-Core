@@ -33,3 +33,8 @@ export default function () {
       'X-Idempotency-Key': uuidv4(),
     },
   });
+
+  check(res, {
+    'status is 201 or 200': (r) => r.status === 201 || r.status === 200,
+  });
+}
