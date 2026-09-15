@@ -37,3 +37,19 @@ pub struct SorobanContractClient {
     relay_signer_secret: String,
     breaker: CircuitBreaker,
 }
+
+impl SorobanContractClient {
+    pub fn new(
+        rpc_url: String,
+        relay_signer_secret: String,
+        failure_threshold: u32,
+        reset_after: Duration,
+    ) -> Self {
+        Self {
+            http: reqwest::Client::new(),
+            rpc_url,
+            relay_signer_secret,
+            breaker: CircuitBreaker::new("contract_rpc", failure_threshold, reset_after),
+        }
+    }
+}
