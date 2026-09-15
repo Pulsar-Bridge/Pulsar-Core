@@ -31,3 +31,5 @@ async fn main() -> anyhow::Result<()> {
         )
         .json()
         .init();
+
+    let config = Config::from_env()?;
