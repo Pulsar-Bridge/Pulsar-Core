@@ -20,3 +20,5 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     ALTER DATABASE "$POSTGRES_DB" OWNER TO pulsar_app;
     GRANT ALL PRIVILEGES ON DATABASE "$POSTGRES_DB" TO pulsar_app;
 EOSQL
+
+echo "pulsar_app role ready (NOSUPERUSER, NOBYPASSRLS) and owns ${POSTGRES_DB}"
