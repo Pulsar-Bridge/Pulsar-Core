@@ -83,3 +83,7 @@ impl IntoResponse for AppError {
                 "message": self.to_string(),
             }
         }));
+
+        (status, body).into_response()
+    }
+}
