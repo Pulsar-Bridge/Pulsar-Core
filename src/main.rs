@@ -62,3 +62,5 @@ async fn main() -> anyhow::Result<()> {
 
     let bind_addr: SocketAddr = config.bind_addr.parse()?;
     let state = AppState::new(config, db, idempotency, horizon, contracts)?;
+
+    let app = build_router(state);
