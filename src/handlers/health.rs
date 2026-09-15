@@ -33,3 +33,14 @@ pub async fn readyz(State(state): State<AppState>) -> impl IntoResponse {
     } else {
         StatusCode::SERVICE_UNAVAILABLE
     };
+
+    (
+        status,
+        Json(json!({
+            "database": db_ok,
+            "redis": redis_ok,
+            "horizon_reachable": horizon_ok,
+            "contract_circuit_ok": contract_breaker_ok,
+        })),
+    )
+}
