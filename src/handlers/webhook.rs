@@ -55,3 +55,16 @@ fn validate(payload: &WebhookPayload) -> AppResult<BigDecimal> {
     }
     Ok(amount)
 }
+
+pub async fn handle(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    axum::Extension(tenant): axum::Extension<TenantContext>,
+    Json(payload): Json<WebhookPayload>,
+) -> AppResult<impl IntoResponse> {
+    let idempotency_key = headers
+        .get("X-Idempotency-Key")
+        .and_then(|v| v.to_str().ok())
+        .filter(|s| !s.is_empty())
+        .ok_or(AppError::MissingIdempotencyKey)?
+        .to_string();
