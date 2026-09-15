@@ -82,3 +82,12 @@ paths:
       responses:
         '200':
           description: Process is up
+
+  /readyz:
+    get:
+      summary: Readiness probe (DB, Redis, Horizon/contract circuit state)
+      responses:
+        '200':
+          description: Ready to serve traffic
+        '503':
+          description: A dependency is unavailable
