@@ -46,3 +46,15 @@ impl IdempotencyStore {
             .query_async(&mut conn)
             .await
             .map_err(AppError::Cache)?;
+
+        Ok(match set {
+            Some(_) => {
+                crate::metrics::IDEMPOTENCY_MISSES.increment();
+                Claim::Acquired
+            }
+            None => {
+                crate::metrics::IDEMPOTENCY_HITS.increment();
+                Claim::AlreadyClaimed
+            }
+        })
+    }
