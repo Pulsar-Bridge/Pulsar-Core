@@ -4,3 +4,9 @@ version = "0.1.0"
 edition = "2021"
 description = "Rust off-chain relay for Pulsar Bridge"
 license = "MIT"
+
+[dependencies]
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+tower = { version = "0.4", features = ["util", "limit"] }
+tower-http = { version = "0.5", features = ["trace", "timeout", "request-id"] }
