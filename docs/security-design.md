@@ -48,3 +48,11 @@ structurally impossible, not just discouraged by convention.
    `rolsuper` or `rolbypassrls` set. See `src/config.rs`. This is the direct
    fix for how the original bug went undetected: the app never checked, so a
    correct RLS policy sat next to a connection that ignored it.
+
+5. **Admin access is an authorization decision, not an RLS bypass.**
+   `handlers::admin::list_transactions` still opens a `begin_tenant_scoped`
+   transaction — it is explicitly given the tenant to look at (via the
+   `:tenant_id` path param) and authorized by `admin_auth`, but it never runs
+   as a role that can see every tenant's rows unconditionally. Don't "fix" a
+   future admin feature by reaching for `BYPASSRLS` — extend the
+   authorization check instead.
