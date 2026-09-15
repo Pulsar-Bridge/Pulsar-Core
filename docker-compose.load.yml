@@ -1,0 +1,4 @@
+# Load-test topology: scales the app and adds a k6 runner hitting /webhook.
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.load.yml up -d postgres redis app
+#   docker compose -f docker-compose.yml -f docker-compose.load.yml run --rm k6
