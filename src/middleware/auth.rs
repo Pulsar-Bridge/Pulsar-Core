@@ -67,3 +67,7 @@ pub async fn api_key_auth(
         tracing::warn!(key_prefix = %prefix(&token), "api key auth failed");
         AppError::Unauthorized
     })?;
+
+    req.extensions_mut().insert(TenantContext { tenant_id });
+    Ok(next.run(req).await)
+}
