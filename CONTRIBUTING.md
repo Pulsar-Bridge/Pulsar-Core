@@ -46,3 +46,6 @@ sqlx migrate add <name>
 ```
 
 ## Commit style
+
+Keep commits scoped to one logical change. Explain *why*, not just *what*, in
+the body when the change isn't self-evident from the diff.
