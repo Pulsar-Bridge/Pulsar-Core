@@ -50,3 +50,17 @@ impl CircuitBreaker {
         self.consecutive_failures.store(0, Ordering::SeqCst);
         self.opened_at_unix_secs.store(0, Ordering::SeqCst);
     }
+
+    fn record_failure(&self) {
+        let failures = self.consecutive_failures.fetch_add(1, Ordering::SeqCst) + 1;
+        if failures >= self.failure_threshold {
+            let was_closed = self
+                .opened_at_unix_secs
+                .swap(now_unix_secs(), Ordering::SeqCst)
+                == 0;
+            if was_closed {
+                crate::metrics::CIRCUIT_BREAKER_OPENS.increment();
+                tracing::warn!(circuit = %self.name, failures, "circuit breaker opened");
+            }
+        }
+    }
