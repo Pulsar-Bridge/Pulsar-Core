@@ -62,3 +62,8 @@ struct RegisterCallbackWireRequest<'a> {
     asset_code: &'a str,
     stellar_account: &'a str,
 }
+
+#[derive(Deserialize)]
+struct RegisterCallbackWireResponse {
+    tx_hash: String,
+}
