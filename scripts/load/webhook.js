@@ -25,3 +25,11 @@ export default function () {
     asset_code: 'USD',
     stellar_account: 'G' + 'A'.repeat(55),
   });
+
+  const res = http.post(`${TARGET_URL}/webhook`, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${TENANT_API_KEY}`,
+      'X-Idempotency-Key': uuidv4(),
+    },
+  });
