@@ -80,3 +80,13 @@ impl ContractClient for SorobanContractClient {
                     asset_code: &req.asset_code,
                     stellar_account: &req.stellar_account,
                 };
+
+                let resp = self
+                    .http
+                    .post(format!("{}/register_callback", self.rpc_url))
+                    .bearer_auth(&self.relay_signer_secret)
+                    .json(&wire)
+                    .timeout(Duration::from_secs(10))
+                    .send()
+                    .await
+                    .map_err(|e| AppError::Upstream(e.to_string()))?;
