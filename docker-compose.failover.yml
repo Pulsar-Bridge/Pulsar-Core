@@ -11,3 +11,28 @@ services:
     command: >
       postgres -c wal_level=replica -c max_wal_senders=5
                -c max_replication_slots=5 -c hot_standby=on
+
+  postgres-replica:
+    image: postgres:16
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGUSER: replicator
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    entrypoint:
+      - bash
+      - -c
+      - |
+        set -e
+        until pg_basebackup -h postgres -U ${POSTGRES_USER:-postgres} -D /var/lib/postgresql/data -Fp -Xs -P -R; do
+          sleep 2
+        done
+        exec postgres
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
