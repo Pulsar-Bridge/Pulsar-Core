@@ -67,3 +67,16 @@ struct RegisterCallbackWireRequest<'a> {
 struct RegisterCallbackWireResponse {
     tx_hash: String,
 }
+
+#[async_trait]
+impl ContractClient for SorobanContractClient {
+    async fn register_callback(&self, req: RegisterCallbackRequest) -> AppResult<String> {
+        self.breaker
+            .call(|| async {
+                let wire = RegisterCallbackWireRequest {
+                    tenant_id: &req.tenant_id,
+                    deposit_id: &req.deposit_id,
+                    amount: &req.amount,
+                    asset_code: &req.asset_code,
+                    stellar_account: &req.stellar_account,
+                };
