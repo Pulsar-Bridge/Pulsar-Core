@@ -6,3 +6,20 @@
 -- docs/security-design.md for why.
 
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE transactions (
+    id                     uuid        NOT NULL DEFAULT gen_random_uuid(),
+    tenant_id              uuid        NOT NULL,
+    idempotency_key        text        NOT NULL,
+    external_deposit_id    text,
+    status                 text        NOT NULL DEFAULT 'pending'
+                             CHECK (status IN ('pending', 'submitted', 'confirmed', 'failed')),
+    amount                 numeric(20, 7) NOT NULL CHECK (amount > 0),
+    asset_code             text        NOT NULL,
+    stellar_account        text        NOT NULL,
+    anchor_platform_payload jsonb      NOT NULL,
+    contract_tx_hash       text,
+    created_at             timestamptz NOT NULL DEFAULT now(),
+    updated_at             timestamptz NOT NULL DEFAULT now(),
+    PRIMARY KEY (id, created_at)
+) PARTITION BY RANGE (created_at);
