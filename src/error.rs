@@ -39,3 +39,6 @@ pub enum AppError {
 
     #[error("upstream horizon/contract call failed: {0}")]
     Upstream(String),
+
+    #[error("circuit breaker open for {0}")]
+    CircuitOpen(String),
