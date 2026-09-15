@@ -20,3 +20,10 @@ the specific failure class this fresh implementation is built to make
 structurally impossible, not just discouraged by convention.
 
 ## The model this repo uses instead
+
+1. **One application role, never a superuser.** `scripts/db/init-roles.sh`
+   creates `pulsar_app` with `NOSUPERUSER NOCREATEDB NOCREATEROLE
+   NOREPLICATION NOBYPASSRLS`, owning the database. It is the *only* role any
+   `.env*` file or connection string in this repo may ever reference. The
+   bootstrap superuser is used exactly once, automatically, by Postgres's own
+   `docker-entrypoint-initdb.d` hook — never by application code.
