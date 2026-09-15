@@ -33,3 +33,7 @@ async fn main() -> anyhow::Result<()> {
         .init();
 
     let config = Config::from_env()?;
+
+    let db = db::connect(&config.database_url, config.database_max_connections).await?;
+    config::assert_not_rls_bypassing(&db).await?;
+    sqlx::migrate!("./migrations").run(&db).await?;
