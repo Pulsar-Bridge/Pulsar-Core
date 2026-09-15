@@ -1,3 +1,8 @@
 # Dev overrides: build with the dev env file, expose Postgres/Redis ports for
 # local debugging, and bind-mount src/ for faster iteration under `cargo watch`
 # (run separately; this file does not itself hot-reload).
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
