@@ -40,3 +40,9 @@ impl AppState {
             NonZeroU32::new(config.rate_limit_per_minute).unwrap_or(NonZeroU32::new(60).unwrap()),
         );
         let rate_limiter = Arc::new(RateLimiter::keyed(quota));
+
+        let tenant_api_keys = config
+            .tenant_api_keys
+            .iter()
+            .map(|(key, tenant)| Ok((key.clone(), Uuid::parse_str(tenant)?)))
+            .collect::<anyhow::Result<HashMap<_, _>>>()?;
