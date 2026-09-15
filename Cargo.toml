@@ -1,0 +1,6 @@
+[package]
+name = "pulsar-core"
+version = "0.1.0"
+edition = "2021"
+description = "Rust off-chain relay for Pulsar Bridge"
+license = "MIT"
