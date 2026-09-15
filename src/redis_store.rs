@@ -58,3 +58,13 @@ impl IdempotencyStore {
             }
         })
     }
+
+    /// Used by `/readyz`; does not touch idempotency keys.
+    pub async fn ping(&self) -> AppResult<()> {
+        let mut conn = self.conn.clone();
+        let _: String = redis::cmd("PING")
+            .query_async(&mut conn)
+            .await
+            .map_err(AppError::Cache)?;
+        Ok(())
+    }
