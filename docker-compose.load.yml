@@ -2,3 +2,10 @@
 # Usage:
 #   docker compose -f docker-compose.yml -f docker-compose.load.yml up -d postgres redis app
 #   docker compose -f docker-compose.yml -f docker-compose.load.yml run --rm k6
+
+services:
+  app:
+    deploy:
+      replicas: 3
+    environment:
+      RATE_LIMIT_PER_MINUTE: 6000
