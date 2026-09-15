@@ -119,3 +119,7 @@ impl Config {
 fn env_or(key: &str, default: &str) -> String {
     std::env::var(key).unwrap_or_else(|_| default.to_string())
 }
+
+fn require_env(key: &str) -> AppResult<String> {
+    std::env::var(key).map_err(|_| AppError::Config(format!("missing required env var {key}")))
+}
