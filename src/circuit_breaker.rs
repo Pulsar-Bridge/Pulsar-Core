@@ -116,3 +116,7 @@ mod tests {
             .await
             .is_err());
         assert_eq!(cb.state(), State::Open);
+
+        let result = cb.call(|| async { Ok::<_, AppError>(()) }).await;
+        assert!(matches!(result, Err(AppError::CircuitOpen(_))));
+    }
