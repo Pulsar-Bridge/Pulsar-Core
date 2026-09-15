@@ -97,3 +97,8 @@ impl ContractClient for SorobanContractClient {
                         resp.status()
                     )));
                 }
+
+                let parsed: RegisterCallbackWireResponse = resp
+                    .json()
+                    .await
+                    .map_err(|e| AppError::Upstream(e.to_string()))?;
