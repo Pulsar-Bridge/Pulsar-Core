@@ -17,3 +17,6 @@ serde_json = "1"
 sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "migrate", "bigdecimal"] }
 bigdecimal = { version = "0.3", features = ["serde"] }
 redis = { version = "0.25", features = ["tokio-comp", "connection-manager"] }
+
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = ["v4", "serde"] }
