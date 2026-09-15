@@ -42,3 +42,7 @@ pub enum AppError {
 
     #[error("circuit breaker open for {0}")]
     CircuitOpen(String),
+
+    #[error("internal error")]
+    Internal(#[from] anyhow::Error),
+}
