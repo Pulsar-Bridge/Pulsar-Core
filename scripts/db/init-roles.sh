@@ -6,3 +6,13 @@
 set -euo pipefail
 
 : "${PULSAR_APP_PASSWORD:?PULSAR_APP_PASSWORD must be set}"
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+    DO \$\$
+    BEGIN
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'pulsar_app') THEN
+            CREATE ROLE pulsar_app LOGIN PASSWORD '${PULSAR_APP_PASSWORD}'
+                NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+        END IF;
+    END
+    \$\$;
