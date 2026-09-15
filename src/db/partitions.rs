@@ -14,3 +14,12 @@ pub async fn run_once(pool: &PgPool, retention_months: u32) -> AppResult<()> {
     let today = Utc::now().date_naive();
     let this_month = first_of_month(today);
     let next_month = add_months(this_month, 1);
+
+    sqlx::query("SELECT ensure_transactions_partition($1)")
+        .bind(this_month)
+        .execute(pool)
+        .await?;
+    sqlx::query("SELECT ensure_transactions_partition($1)")
+        .bind(next_month)
+        .execute(pool)
+        .await?;
