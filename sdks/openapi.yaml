@@ -91,3 +91,10 @@ paths:
           description: Ready to serve traffic
         '503':
           description: A dependency is unavailable
+
+  /metrics:
+    get:
+      summary: Prometheus text-format metrics
+      responses:
+        '200':
+          description: OK
