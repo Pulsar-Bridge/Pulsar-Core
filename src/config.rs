@@ -74,3 +74,7 @@ impl Config {
                 Some((key.to_string(), tenant.to_string()))
             })
             .collect();
+
+        let rate_limit_per_minute = env_or("RATE_LIMIT_PER_MINUTE", "60")
+            .parse()
+            .map_err(|_| AppError::Config("RATE_LIMIT_PER_MINUTE must be a number".into()))?;
