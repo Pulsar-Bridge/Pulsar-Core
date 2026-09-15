@@ -81,3 +81,13 @@ pub async fn handle(
     }
 
     let insert_result = insert_and_submit(&state, tenant, &idempotency_key, &payload, amount).await;
+
+    if insert_result.is_err() {
+        // Payload was valid but something downstream failed before a
+        // customer-visible side effect completed; release the claim so a
+        // corrected/retried webhook within the TTL window isn't dropped.
+        let _ = state
+            .idempotency
+            .release(&tenant_id_str, &idempotency_key)
+            .await;
+    }
