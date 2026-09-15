@@ -82,3 +82,12 @@ impl Config {
         let partition_retention_months = env_or("PARTITION_RETENTION_MONTHS", "12")
             .parse()
             .map_err(|_| AppError::Config("PARTITION_RETENTION_MONTHS must be a number".into()))?;
+
+        let partition_maintenance_interval_secs: u64 =
+            env_or("PARTITION_MAINTENANCE_INTERVAL_SECONDS", "86400")
+                .parse()
+                .map_err(|_| {
+                    AppError::Config(
+                        "PARTITION_MAINTENANCE_INTERVAL_SECONDS must be a number".into(),
+                    )
+                })?;
