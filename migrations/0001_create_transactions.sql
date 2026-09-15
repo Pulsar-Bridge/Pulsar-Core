@@ -51,3 +51,10 @@ $$;
 CREATE TRIGGER transactions_set_updated_at
     BEFORE UPDATE ON transactions
     FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- Partition maintenance -------------------------------------------------
+--
+-- Called by the background job in src/db/partitions.rs every
+-- PARTITION_MAINTENANCE_INTERVAL_SECONDS (default 24h): ensures the current
+-- and next month's partitions exist, and drops partitions older than
+-- PARTITION_RETENTION_MONTHS (default 12).
