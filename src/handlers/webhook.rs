@@ -12,3 +12,17 @@ use crate::error::{AppError, AppResult};
 use crate::middleware::auth::TenantContext;
 use crate::redis_store::Claim;
 use crate::state::AppState;
+
+/// Raw Anchor Platform deposit callback body. Only the fields this relay
+/// actually needs are typed; everything else is preserved via `#[serde(flatten)]`
+/// into `extra` and stored verbatim in `anchor_platform_payload` for audit /
+/// replay.
+#[derive(Debug, Deserialize)]
+pub struct WebhookPayload {
+    pub external_deposit_id: String,
+    pub amount: String,
+    pub asset_code: String,
+    pub stellar_account: String,
+    #[serde(flatten)]
+    pub extra: serde_json::Value,
+}
