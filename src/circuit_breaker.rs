@@ -76,3 +76,16 @@ impl CircuitBreaker {
         if self.state() == State::Open {
             return Err(AppError::CircuitOpen(self.name.clone()));
         }
+
+        match f().await {
+            Ok(v) => {
+                self.record_success();
+                Ok(v)
+            }
+            Err(e) => {
+                self.record_failure();
+                Err(e)
+            }
+        }
+    }
+}
