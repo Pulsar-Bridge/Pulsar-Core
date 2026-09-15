@@ -68,3 +68,6 @@ pub async fn handle(
         .filter(|s| !s.is_empty())
         .ok_or(AppError::MissingIdempotencyKey)?
         .to_string();
+
+    let amount = validate(&payload)?;
+    let tenant_id_str = tenant.tenant_id.to_string();
