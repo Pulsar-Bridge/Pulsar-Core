@@ -28,3 +28,21 @@ impl IdempotencyStore {
             .map_err(AppError::Cache)?;
         Ok(Self { conn, ttl })
     }
+
+    /// Atomically claims `idempotency_key` for `tenant_id` using `SET NX EX`.
+    /// Concurrent requests with the same key race on this single Redis
+    /// command, so exactly one gets `Acquired`; the rest get
+    /// `AlreadyClaimed` and the handler must return 429, per this repo's
+    /// idempotency contract (`docs/auth-rate-limiting.md`).
+    pub async fn claim(&self, tenant_id: &str, idempotency_key: &str) -> AppResult<Claim> {
+        let key = redis_key(tenant_id, idempotency_key);
+        let mut conn = self.conn.clone();
+        let set: Option<String> = redis::cmd("SET")
+            .arg(&key)
+            .arg("1")
+            .arg("NX")
+            .arg("EX")
+            .arg(self.ttl.as_secs())
+            .query_async(&mut conn)
+            .await
+            .map_err(AppError::Cache)?;
