@@ -115,3 +115,18 @@ async fn insert_and_submit(
             }),
         ));
     }
+
+    let record = transactions::insert_pending(
+        &mut tx,
+        transactions::NewDeposit {
+            tenant_id: tenant.tenant_id,
+            idempotency_key: idempotency_key.to_string(),
+            external_deposit_id: Some(payload.external_deposit_id.clone()),
+            amount,
+            asset_code: payload.asset_code.clone(),
+            stellar_account: payload.stellar_account.clone(),
+            anchor_platform_payload: payload.extra.clone(),
+        },
+    )
+    .await?;
+    tx.commit().await.map_err(AppError::Database)?;
