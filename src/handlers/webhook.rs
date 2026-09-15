@@ -199,3 +199,11 @@ mod tests {
         let p = payload(|p| p.amount = "not-a-number".to_string());
         assert!(validate(&p).is_err());
     }
+
+    #[test]
+    fn rejects_zero_or_negative_amount() {
+        let p = payload(|p| p.amount = "0".to_string());
+        assert!(validate(&p).is_err());
+        let p = payload(|p| p.amount = "-5".to_string());
+        assert!(validate(&p).is_err());
+    }
