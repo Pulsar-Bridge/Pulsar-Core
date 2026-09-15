@@ -71,3 +71,13 @@ pub async fn api_key_auth(
     req.extensions_mut().insert(TenantContext { tenant_id });
     Ok(next.run(req).await)
 }
+
+pub async fn admin_auth(
+    State(state): State<AppState>,
+    req: Request,
+    next: Next,
+) -> Result<Response, AppError> {
+    let ip = client_ip(&req);
+    let token = bearer_token(&req).map(str::to_string);
+    let rate_limit_key = token.clone().unwrap_or(ip);
+    check_rate_limit(&state, &rate_limit_key)?;
