@@ -33,3 +33,6 @@ pub enum AppError {
 
     #[error("database error")]
     Database(#[from] sqlx::Error),
+
+    #[error("cache error")]
+    Cache(#[from] redis::RedisError),
