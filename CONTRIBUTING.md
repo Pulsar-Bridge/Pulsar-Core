@@ -40,3 +40,7 @@ cargo run
 
 Migrations run automatically on startup via `sqlx::migrate!`. To add a new
 one:
+
+```
+sqlx migrate add <name>
+```
