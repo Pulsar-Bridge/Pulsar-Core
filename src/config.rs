@@ -78,3 +78,7 @@ impl Config {
         let rate_limit_per_minute = env_or("RATE_LIMIT_PER_MINUTE", "60")
             .parse()
             .map_err(|_| AppError::Config("RATE_LIMIT_PER_MINUTE must be a number".into()))?;
+
+        let partition_retention_months = env_or("PARTITION_RETENTION_MONTHS", "12")
+            .parse()
+            .map_err(|_| AppError::Config("PARTITION_RETENTION_MONTHS must be a number".into()))?;
