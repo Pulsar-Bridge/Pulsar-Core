@@ -56,3 +56,9 @@ structurally impossible, not just discouraged by convention.
    as a role that can see every tenant's rows unconditionally. Don't "fix" a
    future admin feature by reaching for `BYPASSRLS` — extend the
    authorization check instead.
+
+6. **No dead code paths.** If an endpoint or session store isn't wired into
+   the live router in `src/main.rs::build_router`, it doesn't exist in this
+   repo. That was the second half of the original bug (`/reconnect`): don't
+   leave security-relevant code unwired "for later" — delete it until it's
+   actually needed and can be reviewed wired-in.
