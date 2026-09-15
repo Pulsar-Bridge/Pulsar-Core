@@ -30,3 +30,10 @@ pub async fn run_once(pool: &PgPool, retention_months: u32) -> AppResult<()> {
             .bind(cutoff)
             .fetch_all(pool)
             .await?;
+
+    if !dropped.is_empty() {
+        tracing::info!(
+            dropped = ?dropped.iter().map(|(n,)| n.as_str()).collect::<Vec<_>>(),
+            "dropped retired transaction partitions"
+        );
+    }
