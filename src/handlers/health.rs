@@ -13,3 +13,10 @@ use crate::state::AppState;
 pub async fn healthz() -> impl IntoResponse {
     StatusCode::OK
 }
+
+/// Readiness: the process can actually serve traffic. Checked against
+/// Postgres, Redis, and Horizon (through its circuit breaker, so an open
+/// breaker fails readiness rather than accepting traffic it will just 503).
+pub async fn readyz(State(state): State<AppState>) -> impl IntoResponse {
+    let db_ok = sqlx::query("SELECT 1").execute(&state.db).await.is_ok();
+    let redis_ok = state.idempotency.ping().await.is_ok();
