@@ -27,3 +27,5 @@ standing engineering brief (sibling repos, security history, ownership).
 - Per-tenant quota configuration: **not implemented yet** — flat
   `RATE_LIMIT_PER_MINUTE` only. See `docs/quota-configuration.md` for the
   planned next step.
+
+## Quick start
