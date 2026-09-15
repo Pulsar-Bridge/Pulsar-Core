@@ -23,3 +23,10 @@ pub async fn run_once(pool: &PgPool, retention_months: u32) -> AppResult<()> {
         .bind(next_month)
         .execute(pool)
         .await?;
+
+    let cutoff = add_months(this_month, -(retention_months as i32));
+    let dropped: Vec<(String,)> =
+        sqlx::query_as("SELECT dropped_partition FROM drop_transactions_partitions_older_than($1)")
+            .bind(cutoff)
+            .fetch_all(pool)
+            .await?;
