@@ -36,3 +36,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  app-failover:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.example.failover
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres-replica:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
