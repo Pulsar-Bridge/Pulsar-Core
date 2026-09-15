@@ -165,3 +165,7 @@ async fn insert_and_submit(
         }),
     ))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
