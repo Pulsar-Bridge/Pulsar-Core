@@ -76,3 +76,10 @@ impl IntoResponse for AppError {
         } else {
             tracing::warn!(error = %self, code, "request rejected");
         }
+
+        let body = Json(json!({
+            "error": {
+                "code": code,
+                "message": self.to_string(),
+            }
+        }));
