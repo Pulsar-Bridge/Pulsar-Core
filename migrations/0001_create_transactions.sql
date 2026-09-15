@@ -29,3 +29,6 @@ CREATE TABLE transactions (
 -- uniqueness guarantee across partition boundaries.
 CREATE INDEX idx_transactions_tenant_idempotency
     ON transactions (tenant_id, idempotency_key);
+
+CREATE INDEX idx_transactions_tenant_status
+    ON transactions (tenant_id, status);
