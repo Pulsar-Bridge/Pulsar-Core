@@ -24,3 +24,6 @@ pub enum AppError {
 
     #[error("duplicate request in flight")]
     IdempotencyConflict,
+
+    #[error("unauthorized")]
+    Unauthorized,
