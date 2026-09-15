@@ -107,3 +107,8 @@ impl ContractClient for SorobanContractClient {
             })
             .await
     }
+
+    fn breaker_state(&self) -> crate::circuit_breaker::State {
+        self.breaker.state()
+    }
+}
