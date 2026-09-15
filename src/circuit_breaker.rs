@@ -32,3 +32,16 @@ impl CircuitBreaker {
             opened_at_unix_secs: AtomicU64::new(0),
         }
     }
+
+    pub fn state(&self) -> State {
+        let opened_at = self.opened_at_unix_secs.load(Ordering::SeqCst);
+        if opened_at == 0 {
+            return State::Closed;
+        }
+        let now = now_unix_secs();
+        if now.saturating_sub(opened_at) >= self.reset_after.as_secs() {
+            State::HalfOpen
+        } else {
+            State::Open
+        }
+    }
