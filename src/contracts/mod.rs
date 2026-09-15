@@ -14,3 +14,9 @@ pub struct RegisterCallbackRequest {
     pub asset_code: String,
     pub stellar_account: String,
 }
+
+#[async_trait]
+pub trait ContractClient: Send + Sync {
+    async fn register_callback(&self, req: RegisterCallbackRequest) -> AppResult<String>;
+    fn breaker_state(&self) -> crate::circuit_breaker::State;
+}
