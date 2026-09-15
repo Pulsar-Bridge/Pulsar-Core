@@ -29,3 +29,16 @@ fn client_ip(req: &Request) -> String {
         .map(|c| c.0.ip().to_string())
         .unwrap_or_else(|| "unknown".to_string())
 }
+
+/// Every auth attempt — success or failure — is rate limited by the
+/// presented key (falling back to client IP when no key was presented at
+/// all), so a credential-stuffing run against `admin_auth`/`api_key_auth`
+/// gets throttled before it can brute force keys. Failures are logged and
+/// counted in `crate::metrics::AUTH_FAILURES` so they're alertable.
+fn check_rate_limit(state: &AppState, key: &str) -> Result<(), AppError> {
+    if state.rate_limiter.check_key(&key.to_string()).is_err() {
+        tracing::warn!(key_prefix = %prefix(key), "rate limit exceeded on auth endpoint");
+        return Err(AppError::RateLimited);
+    }
+    Ok(())
+}
