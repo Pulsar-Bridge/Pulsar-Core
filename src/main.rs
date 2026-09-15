@@ -37,3 +37,10 @@ async fn main() -> anyhow::Result<()> {
     let db = db::connect(&config.database_url, config.database_max_connections).await?;
     config::assert_not_rls_bypassing(&db).await?;
     sqlx::migrate!("./migrations").run(&db).await?;
+
+    db::partitions::run_once(&db, config.partition_retention_months).await?;
+    db::partitions::spawn_background_job(
+        db.clone(),
+        config.partition_retention_months,
+        config.partition_maintenance_interval,
+    );
