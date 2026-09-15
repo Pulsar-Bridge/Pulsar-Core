@@ -18,3 +18,5 @@ unwired `/reconnect` session store existed alongside it.
 This is not a fabricated incident with a timeline or impact numbers — it's
 the specific failure class this fresh implementation is built to make
 structurally impossible, not just discouraged by convention.
+
+## The model this repo uses instead
