@@ -71,3 +71,11 @@ pub async fn handle(
 
     let amount = validate(&payload)?;
     let tenant_id_str = tenant.tenant_id.to_string();
+
+    let claim = state
+        .idempotency
+        .claim(&tenant_id_str, &idempotency_key)
+        .await?;
+    if matches!(claim, Claim::AlreadyClaimed) {
+        return Err(AppError::IdempotencyConflict);
+    }
