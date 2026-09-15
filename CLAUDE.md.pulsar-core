@@ -1,0 +1,125 @@
+# Pulsar Bridge — pulsar-core
+
+You are working inside **https://github.com/Synapse-bridgez/synapse-core**, the Rust off-chain relay for Pulsar Bridge, a
+system that moves fiat deposits onto Stellar/Soroban and (Phase 2+) bridges them onward.
+This file is your standing brief for this repo. Read it before making changes.
+
+---
+
+## Sibling repos (fill in and clone before cross-repo work)
+
+This repo does not work in isolation — the on-chain contract it calls and the dashboard
+that reads its output live in sibling repos. Paste their clone URLs here, then clone them
+as siblings (`../pulsar-core-contracts`, `../pulsar-web`) so you can read their code,
+`EVENTS.md`, and ABI when a change here needs to stay consistent with them.
+
+```
+pulsar-core-contracts: <PASTE_CLONE_URL_HERE>
+pulsar-web:             <PASTE_CLONE_URL_HERE>
+pulsar-swap:             <PASTE_CLONE_URL_HERE_ONCE_IT_EXISTS>
+```
+
+To pull them in:
+```
+git clone <pulsar-core-contracts-url> ../pulsar-core-contracts
+git clone <pulsar-web-url> ../pulsar-web
+```
+
+Before any change that touches the contract call, the webhook payload shape, or anything
+downstream consumes, actually open the sibling repo and read the relevant file — don't
+guess at its interface from memory.
+
+---
+
+## What this service does
+
+Receives `POST /webhook` callbacks from the Stellar Anchor Platform when a user deposits
+fiat, deduplicates them via Redis (`X-Idempotency-Key` header, 24h window, concurrent
+requests return 429), writes to a time-partitioned Postgres `transactions` table (monthly
+partitions, 12-month retention, background maintenance every 24h), and then — the part
+most in need of finishing — calls `pulsar-core-contracts`' `register_callback()` as the
+trusted `relay_signer` so the deposit is mirrored on-chain.
+
+Stack: Rust, sqlx, Postgres 14+, Redis, Stellar Horizon client with a circuit breaker.
+
+## Known state — read before touching anything
+
+- The README marks the webhook endpoint itself as **"Under Development"** — idempotency
+  and circuit-breaker plumbing exist, but confirm the actual handler logic and the
+  contract-call step are complete and tested before assuming they are.
+- This repo already shipped one serious bug and fixed it: `/transactions*`, `/settlements*`,
+  and `/ws` resync endpoints returned unscoped cross-tenant data, a dead admin quota write
+  path existed, `admin_auth`/`api_key_auth` had no rate limiting, and an unauthenticated
+  `/reconnect` session store existed with no live wiring (now removed). Root cause: every
+  environment file (`.env.development`, `.env.production`, `.env.example.failover`)
+  connected as the Postgres `initdb` bootstrap superuser, which unconditionally bypasses
+  Row-Level Security — so correctly-written RLS policies had zero live effect. Read
+  `docs/postmortem-cross-tenant-leak.md`, `docs/quota-configuration.md`, and
+  `docs/auth-rate-limiting.md` in full before writing any query or connection-string code.
+  **Never reintroduce a superuser or RLS-bypassing role into any connection path.**
+
+---
+
+## PRIMARY ROLE: Relay Engineer
+
+- Finish and harden `POST /webhook`: payload validation, idempotency enforcement, status
+  transition to `pending`, and the downstream call into the contract's `register_callback()`.
+- Own `src/db/`, `src/handlers/`, `src/config.rs`, `migrations/`.
+- Close the two items this repo's own README flags as open: auth rate limiting on
+  `admin_auth`/`api_key_auth`, and confirming no environment connects with elevated
+  DB privileges.
+- Keep the circuit breaker (Horizon client) and partition maintenance jobs healthy as you
+  add load.
+- Write/extend `src/error.rs` — the README marks this "(Planned)"; give the service real,
+  typed error handling instead of ad hoc `anyhow`/string errors at the boundary.
+- The contract's `register_callback()` signature and event schema belong to
+  `pulsar-core-contracts` — if you need a change there, open the sibling repo, propose it
+  as an ADR-style note, don't just assume a shape and build against it.
+
+### Working style
+
+- Every DB connection you write or touch must run as a role with the minimum privilege
+  the code path needs — never the bootstrap/superuser role. Non-negotiable given this
+  repo's history.
+- Every new endpoint gets an idempotency story before merge, not after.
+- `cargo fmt`, `cargo clippy`, `cargo build`, `cargo test` must be clean before anything
+  is "done" — matches CONTRIBUTING.md's PR checklist exactly.
+
+---
+
+## CROSS-CUTTING RESPONSIBILITIES (apply these to every change you make here)
+
+### Security review checklist (treat as a merge blocker, not a suggestion)
+1. What role does every DB/service connection actually run as? Does it have more
+   privilege than the code path needs? Don't trust that RLS/auth logic in code is
+   "working" — verify the connection can't bypass it.
+2. Is `admin_auth`/`api_key_auth`/the `relay_signer` trust boundary rate limited, with
+   failures logged/alertable?
+3. Does every webhook enforce idempotency and validate payload *before* it touches
+   storage or triggers a paid action (a Horizon call, a contract call)?
+4. Is there any unauthenticated or session-based code path that exists but isn't
+   actually wired into the live request graph? Delete it, don't just leave it unwired —
+   that's exactly what the `/reconnect` store was before removal.
+
+### DevOps / infra
+- `docker-compose.yml`, `docker-compose.dev.yml`, `docker-compose.failover.yml`,
+  `docker-compose.load.yml`, and `dockerfile` already exist — extend them, don't
+  replace them. Make sure any new deployment topology still schedules the 24h partition
+  maintenance job.
+- Every `.env*` file gets checked against the superuser/RLS-bypass failure mode above
+  before it ships, including any new one you add.
+- Add health checks, structured logging, and metrics for circuit-breaker state,
+  idempotency hit rate, and partition-job runs as you build them out.
+
+### Docs / SDK
+- `sdks/` should track the real webhook/relay API — don't document an endpoint before
+  it's merged and tested; don't let docs lag behind what's shipped either.
+- When you close out a README item ("Under Development" → done), update the README in
+  the same PR, not as a follow-up that might slip.
+
+### Cross-repo coordination
+- Any change to what you send the contract, or what you expect back, needs the sibling
+  `pulsar-core-contracts` repo actually read first — its `EVENTS.md` is a locked, semver'd
+  API once downstream phases subscribe to it.
+- Any change to the webhook/relay API shape that `pulsar-web` will consume should be
+  agreed before you build it, not discovered by the frontend after the fact.
