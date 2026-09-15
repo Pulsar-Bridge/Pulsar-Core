@@ -56,3 +56,8 @@ pub async fn api_key_auth(
     let token = bearer_token(&req).map(str::to_string);
     let rate_limit_key = token.clone().unwrap_or(ip);
     check_rate_limit(&state, &rate_limit_key)?;
+
+    let token = token.ok_or_else(|| {
+        crate::metrics::AUTH_FAILURES.increment();
+        AppError::Unauthorized
+    })?;
