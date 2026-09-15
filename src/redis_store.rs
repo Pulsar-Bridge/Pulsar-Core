@@ -19,3 +19,12 @@ pub enum Claim {
     /// completed within the TTL window.
     AlreadyClaimed,
 }
+
+impl IdempotencyStore {
+    pub async fn connect(redis_url: &str, ttl: Duration) -> AppResult<Self> {
+        let client = redis::Client::open(redis_url).map_err(AppError::Cache)?;
+        let conn = ConnectionManager::new(client)
+            .await
+            .map_err(AppError::Cache)?;
+        Ok(Self { conn, ttl })
+    }
