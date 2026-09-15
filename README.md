@@ -29,3 +29,9 @@ standing engineering brief (sibling repos, security history, ownership).
   planned next step.
 
 ## Quick start
+
+```
+cp .env.development .env   # dev defaults; see .env.example for the full var list
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres redis
+cargo run
+```
