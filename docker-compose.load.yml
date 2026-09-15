@@ -9,3 +9,14 @@ services:
       replicas: 3
     environment:
       RATE_LIMIT_PER_MINUTE: 6000
+
+  k6:
+    image: grafana/k6:latest
+    depends_on:
+      - app
+    volumes:
+      - ./scripts/load:/scripts:ro
+    entrypoint: ["k6", "run", "/scripts/webhook.js"]
+    environment:
+      TARGET_URL: http://app:8080
+      TENANT_API_KEY: ${TENANT_API_KEYS_LOAD_TEST_KEY:-changeme-tenant-key}
