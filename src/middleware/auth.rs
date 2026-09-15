@@ -42,3 +42,7 @@ fn check_rate_limit(state: &AppState, key: &str) -> Result<(), AppError> {
     }
     Ok(())
 }
+
+fn prefix(key: &str) -> String {
+    key.chars().take(8).collect()
+}
