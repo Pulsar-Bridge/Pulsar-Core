@@ -46,3 +46,9 @@ async fn main() -> anyhow::Result<()> {
     );
 
     let idempotency = IdempotencyStore::connect(&config.redis_url, config.idempotency_ttl).await?;
+
+    let horizon = HorizonClient::new(
+        config.horizon_base_url.clone(),
+        config.horizon_circuit_breaker_failure_threshold,
+        config.horizon_circuit_breaker_reset_after,
+    );
