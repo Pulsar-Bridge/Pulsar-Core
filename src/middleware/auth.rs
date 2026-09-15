@@ -96,3 +96,6 @@ pub async fn admin_auth(
         tracing::warn!(key_prefix = %prefix(&token), "admin auth failed");
         return Err(AppError::Unauthorized);
     }
+
+    Ok(next.run(req).await)
+}
