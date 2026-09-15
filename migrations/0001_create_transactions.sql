@@ -4,3 +4,5 @@
 -- see rows outside the tenant set via `SET LOCAL app.tenant_id`. There is
 -- intentionally no bypass role or admin superuser path here — see
 -- docs/security-design.md for why.
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
