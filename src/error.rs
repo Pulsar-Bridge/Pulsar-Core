@@ -15,3 +15,6 @@ pub type AppResult<T> = Result<T, AppError>;
 pub enum AppError {
     #[error("invalid configuration: {0}")]
     Config(String),
+
+    #[error("invalid request payload: {0}")]
+    InvalidPayload(String),
