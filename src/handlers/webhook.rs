@@ -169,3 +169,15 @@ async fn insert_and_submit(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn payload(overrides: impl FnOnce(&mut WebhookPayload)) -> WebhookPayload {
+        let mut p = WebhookPayload {
+            external_deposit_id: "dep-123".to_string(),
+            amount: "10.5".to_string(),
+            asset_code: "USD".to_string(),
+            stellar_account: format!("G{}", "A".repeat(55)),
+            extra: serde_json::json!({}),
+        };
+        overrides(&mut p);
+        p
+    }
