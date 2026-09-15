@@ -104,3 +104,9 @@ mod tests {
     #[tokio::test]
     async fn opens_after_threshold_and_rejects_immediately() {
         let cb = CircuitBreaker::new("horizon", 2, Duration::from_secs(60));
+
+        assert!(cb
+            .call(|| async { Err::<(), _>(AppError::Upstream("boom".into())) })
+            .await
+            .is_err());
+        assert_eq!(cb.state(), State::Closed);
