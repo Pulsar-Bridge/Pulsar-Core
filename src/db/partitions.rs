@@ -84,3 +84,17 @@ mod tests {
             NaiveDate::from_ymd_opt(2025, 12, 1).unwrap()
         );
     }
+
+    #[test]
+    fn add_months_handles_negative_rollover_across_multiple_years() {
+        let d = NaiveDate::from_ymd_opt(2026, 1, 1).unwrap();
+        assert_eq!(
+            add_months(d, -12),
+            NaiveDate::from_ymd_opt(2025, 1, 1).unwrap()
+        );
+        assert_eq!(
+            add_months(d, -13),
+            NaiveDate::from_ymd_opt(2024, 12, 1).unwrap()
+        );
+    }
+}
