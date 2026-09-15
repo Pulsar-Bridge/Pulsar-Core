@@ -9,3 +9,15 @@ pub enum State {
     Open,
     HalfOpen,
 }
+
+/// A minimal closed/open/half-open circuit breaker guarding the Horizon
+/// client. Opens after `failure_threshold` consecutive failures, stays open
+/// for `reset_after`, then allows a single half-open probe before deciding
+/// to close (probe succeeded) or re-open (probe failed).
+pub struct CircuitBreaker {
+    name: String,
+    failure_threshold: u32,
+    reset_after: Duration,
+    consecutive_failures: AtomicU32,
+    opened_at_unix_secs: AtomicU64,
+}
