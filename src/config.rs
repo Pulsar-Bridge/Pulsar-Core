@@ -123,3 +123,17 @@ fn env_or(key: &str, default: &str) -> String {
 fn require_env(key: &str) -> AppResult<String> {
     std::env::var(key).map_err(|_| AppError::Config(format!("missing required env var {key}")))
 }
+
+/// Refuses to start if the configured database role can bypass Row-Level Security.
+///
+/// This repo previously shipped with every `.env*` file pointed at the Postgres
+/// `initdb` bootstrap superuser, which silently bypasses RLS regardless of how
+/// correct the policies are. This check makes that failure mode fail loudly at
+/// startup instead of leaking cross-tenant data at runtime. See
+/// `docs/security-design.md`.
+pub async fn assert_not_rls_bypassing(pool: &sqlx::PgPool) -> AppResult<()> {
+    let row: (bool, bool) =
+        sqlx::query_as("SELECT rolsuper, rolbypassrls FROM pg_roles WHERE rolname = current_user")
+            .fetch_one(pool)
+            .await
+            .map_err(AppError::Database)?;
