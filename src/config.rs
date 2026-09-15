@@ -28,3 +28,32 @@ pub struct Config {
 impl Config {
     pub fn from_env() -> AppResult<Self> {
         let _ = dotenvy::dotenv();
+
+        let bind_addr = env_or("BIND_ADDR", "0.0.0.0:8080");
+        let database_url = require_env("DATABASE_URL")?;
+        let database_max_connections = env_or("DATABASE_MAX_CONNECTIONS", "10")
+            .parse()
+            .map_err(|_| AppError::Config("DATABASE_MAX_CONNECTIONS must be a number".into()))?;
+        let redis_url = require_env("REDIS_URL")?;
+        let idempotency_ttl_secs: u64 = env_or("IDEMPOTENCY_TTL_SECONDS", "86400")
+            .parse()
+            .map_err(|_| AppError::Config("IDEMPOTENCY_TTL_SECONDS must be a number".into()))?;
+        let horizon_base_url = require_env("HORIZON_BASE_URL")?;
+        let horizon_circuit_breaker_failure_threshold =
+            env_or("HORIZON_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "5")
+                .parse()
+                .map_err(|_| {
+                    AppError::Config(
+                        "HORIZON_CIRCUIT_BREAKER_FAILURE_THRESHOLD must be a number".into(),
+                    )
+                })?;
+        let horizon_circuit_breaker_reset_after_secs: u64 =
+            env_or("HORIZON_CIRCUIT_BREAKER_RESET_AFTER_SECONDS", "30")
+                .parse()
+                .map_err(|_| {
+                    AppError::Config(
+                        "HORIZON_CIRCUIT_BREAKER_RESET_AFTER_SECONDS must be a number".into(),
+                    )
+                })?;
+        let contract_rpc_url = require_env("CONTRACT_RPC_URL")?;
+        let relay_signer_secret = require_env("RELAY_SIGNER_SECRET")?;
