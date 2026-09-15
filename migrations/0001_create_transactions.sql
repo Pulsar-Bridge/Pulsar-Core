@@ -58,3 +58,19 @@ CREATE TRIGGER transactions_set_updated_at
 -- PARTITION_MAINTENANCE_INTERVAL_SECONDS (default 24h): ensures the current
 -- and next month's partitions exist, and drops partitions older than
 -- PARTITION_RETENTION_MONTHS (default 12).
+
+CREATE OR REPLACE FUNCTION ensure_transactions_partition(p_month date)
+RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+    partition_name text := 'transactions_' || to_char(p_month, 'YYYY_MM');
+    start_date date := date_trunc('month', p_month);
+    end_date date := start_date + interval '1 month';
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_class WHERE relname = partition_name) THEN
+        EXECUTE format(
+            'CREATE TABLE %I PARTITION OF transactions FOR VALUES FROM (%L) TO (%L)',
+            partition_name, start_date, end_date
+        );
+    END IF;
+END;
+$$;
