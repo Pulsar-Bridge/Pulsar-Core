@@ -12,3 +12,5 @@ standing brief: *"The contract's `register_callback()` signature and event
 schema belong to `pulsar-core-contracts` — if you need a change there, open
 the sibling repo, propose it as an ADR-style note, don't just assume a shape
 and build against it."*
+
+## Before this goes anywhere near a real deployment
