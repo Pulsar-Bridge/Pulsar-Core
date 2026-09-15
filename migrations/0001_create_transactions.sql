@@ -35,3 +35,7 @@ CREATE INDEX idx_transactions_tenant_status
 
 ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE transactions FORCE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON transactions
+    USING (tenant_id = current_setting('app.tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.tenant_id', true)::uuid);
