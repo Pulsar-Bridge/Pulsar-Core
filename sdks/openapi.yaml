@@ -75,3 +75,10 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Transaction'
+
+  /healthz:
+    get:
+      summary: Liveness probe
+      responses:
+        '200':
+          description: Process is up
