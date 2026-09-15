@@ -91,3 +91,18 @@ pub async fn mark_failed(
         .map_err(AppError::Database)?;
     Ok(())
 }
+
+/// Scoped to the current tenant by RLS; `tenant_id` must still be passed so
+/// callers open the transaction with the matching `begin_tenant_scoped`.
+pub async fn list_for_tenant(
+    tx: &mut Transaction<'_, Postgres>,
+    limit: i64,
+) -> AppResult<Vec<DepositTransaction>> {
+    sqlx::query_as::<_, DepositTransaction>(
+        "SELECT * FROM transactions ORDER BY created_at DESC LIMIT $1",
+    )
+    .bind(limit)
+    .fetch_all(&mut **tx)
+    .await
+    .map_err(AppError::Database)
+}
