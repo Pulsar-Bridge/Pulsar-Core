@@ -45,3 +45,8 @@ impl CircuitBreaker {
             State::Open
         }
     }
+
+    fn record_success(&self) {
+        self.consecutive_failures.store(0, Ordering::SeqCst);
+        self.opened_at_unix_secs.store(0, Ordering::SeqCst);
+    }
