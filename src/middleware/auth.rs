@@ -86,3 +86,13 @@ pub async fn admin_auth(
         crate::metrics::AUTH_FAILURES.increment();
         AppError::Unauthorized
     })?;
+
+    if !state
+        .admin_api_keys
+        .iter()
+        .any(|k| constant_time_eq(k, &token))
+    {
+        crate::metrics::AUTH_FAILURES.increment();
+        tracing::warn!(key_prefix = %prefix(&token), "admin auth failed");
+        return Err(AppError::Unauthorized);
+    }
