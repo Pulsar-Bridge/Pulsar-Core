@@ -23,3 +23,9 @@ CREATE TABLE transactions (
     updated_at             timestamptz NOT NULL DEFAULT now(),
     PRIMARY KEY (id, created_at)
 ) PARTITION BY RANGE (created_at);
+
+-- Idempotency is authoritative in Redis (24h NX lock, see src/redis/idempotency.rs);
+-- this index is a defense-in-depth lookup aid within a partition, not a hard
+-- uniqueness guarantee across partition boundaries.
+CREATE INDEX idx_transactions_tenant_idempotency
+    ON transactions (tenant_id, idempotency_key);
