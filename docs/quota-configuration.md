@@ -18,3 +18,12 @@ future write path, in the same PR, per the "no dead code paths" rule in
 `docs/security-design.md`.
 
 ## Natural next step, when per-tenant quotas are needed
+
+1. A `tenant_quotas` table (`tenant_id`, `requests_per_minute`, `updated_at`),
+   RLS-scoped and written through `begin_tenant_scoped` like everything else
+   — no bypass role, per `docs/security-design.md`.
+2. `AppState::rate_limiter` keyed by `tenant_id` with a per-tenant quota
+   looked up from that table (cached in-process with a short TTL to avoid a
+   DB round trip per request).
+3. An `admin_auth`-protected write endpoint, added in the same PR as (1) and
+   (2) — not before either exists to read and enforce it.
