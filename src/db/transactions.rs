@@ -20,3 +20,13 @@ pub struct DepositTransaction {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }
+
+pub struct NewDeposit {
+    pub tenant_id: Uuid,
+    pub idempotency_key: String,
+    pub external_deposit_id: Option<String>,
+    pub amount: sqlx::types::BigDecimal,
+    pub asset_code: String,
+    pub stellar_account: String,
+    pub anchor_platform_payload: serde_json::Value,
+}
