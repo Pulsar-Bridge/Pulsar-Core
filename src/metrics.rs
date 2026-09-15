@@ -27,3 +27,26 @@ pub static PARTITION_JOB_RUNS: Counter = Counter::new();
 pub static PARTITION_JOB_FAILURES: Counter = Counter::new();
 pub static CIRCUIT_BREAKER_OPENS: Counter = Counter::new();
 pub static AUTH_FAILURES: Counter = Counter::new();
+
+pub fn render() -> String {
+    format!(
+        "# TYPE pulsar_idempotency_hits_total counter\n\
+         pulsar_idempotency_hits_total {}\n\
+         # TYPE pulsar_idempotency_misses_total counter\n\
+         pulsar_idempotency_misses_total {}\n\
+         # TYPE pulsar_partition_job_runs_total counter\n\
+         pulsar_partition_job_runs_total {}\n\
+         # TYPE pulsar_partition_job_failures_total counter\n\
+         pulsar_partition_job_failures_total {}\n\
+         # TYPE pulsar_circuit_breaker_opens_total counter\n\
+         pulsar_circuit_breaker_opens_total {}\n\
+         # TYPE pulsar_auth_failures_total counter\n\
+         pulsar_auth_failures_total {}\n",
+        IDEMPOTENCY_HITS.get(),
+        IDEMPOTENCY_MISSES.get(),
+        PARTITION_JOB_RUNS.get(),
+        PARTITION_JOB_FAILURES.get(),
+        CIRCUIT_BREAKER_OPENS.get(),
+        AUTH_FAILURES.get(),
+    )
+}
