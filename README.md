@@ -6,3 +6,5 @@ on-chain via the Pulsar contract.
 
 Read `CLAUDE.md.pulsar-core` before making changes — it's this repo's
 standing engineering brief (sibling repos, security history, ownership).
+
+## Status
