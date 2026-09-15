@@ -5,3 +5,9 @@
 # production failover solution — a real deployment needs an orchestrator
 # (e.g. Patroni) to handle actual promotion; this compose file does not
 # automate promotion.
+
+services:
+  postgres:
+    command: >
+      postgres -c wal_level=replica -c max_wal_senders=5
+               -c max_replication_slots=5 -c hot_standby=on
