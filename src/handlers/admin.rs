@@ -12,3 +12,7 @@ pub struct ListQuery {
     #[serde(default = "default_limit")]
     limit: i64,
 }
+
+fn default_limit() -> i64 {
+    50
+}
