@@ -47,3 +47,31 @@ paths:
           description: Upstream Horizon/contract call failed
         '503':
           description: Circuit breaker open
+
+  /admin/tenants/{tenant_id}/transactions:
+    get:
+      summary: List a tenant's deposit transactions
+      security:
+        - adminApiKey: []
+      parameters:
+        - name: tenant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 500
+      responses:
+        '200':
+          description: Transactions for the tenant, newest first
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
