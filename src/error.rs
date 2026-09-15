@@ -70,3 +70,9 @@ impl AppError {
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {
         let (status, code) = self.status_and_code();
+
+        if status == StatusCode::INTERNAL_SERVER_ERROR || status == StatusCode::BAD_GATEWAY {
+            tracing::error!(error = %self, code, "request failed");
+        } else {
+            tracing::warn!(error = %self, code, "request rejected");
+        }
