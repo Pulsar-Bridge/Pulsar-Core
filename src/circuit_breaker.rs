@@ -100,3 +100,7 @@ fn now_unix_secs() -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn opens_after_threshold_and_rejects_immediately() {
+        let cb = CircuitBreaker::new("horizon", 2, Duration::from_secs(60));
