@@ -1,0 +1,1 @@
+# Contract integration (`register_callback`)
