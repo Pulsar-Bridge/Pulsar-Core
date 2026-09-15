@@ -32,3 +32,5 @@ reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-feature
 governor = "0.6"
 
 dotenvy = "0.15"
+
+async-trait = "0.1"
