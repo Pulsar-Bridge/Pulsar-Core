@@ -21,3 +21,6 @@ pub enum AppError {
 
     #[error("missing idempotency key")]
     MissingIdempotencyKey,
+
+    #[error("duplicate request in flight")]
+    IdempotencyConflict,
