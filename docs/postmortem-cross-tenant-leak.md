@@ -23,3 +23,8 @@ structurally:
   place routes are wired, and everything in it is reachable and covered by
   `admin_auth` or `api_key_auth`. Keep it that way — see the "no dead code
   paths" rule in `docs/security-design.md`.
+
+If a real cross-tenant incident happens against a deployment of this code in
+the future, replace this file with an actual postmortem (timeline, impact,
+detection gap, remediation, follow-ups) rather than editing this note in
+place.
