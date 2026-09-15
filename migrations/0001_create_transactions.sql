@@ -1,0 +1,6 @@
+-- Time-partitioned, tenant-isolated deposit transactions table.
+--
+-- RLS is FORCE-d so that even the owning application role (pulsar_app) cannot
+-- see rows outside the tenant set via `SET LOCAL app.tenant_id`. There is
+-- intentionally no bypass role or admin superuser path here — see
+-- docs/security-design.md for why.
