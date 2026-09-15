@@ -98,3 +98,11 @@ fn build_router(state: AppState) -> Router {
         .route("/healthz", get(handlers::health::healthz))
         .route("/readyz", get(handlers::health::readyz))
         .route("/metrics", get(handlers::health::metrics));
+
+    Router::new()
+        .merge(webhook_routes)
+        .merge(admin_routes)
+        .merge(public_routes)
+        .layer(tower_http::trace::TraceLayer::new_for_http())
+        .with_state(state)
+}
