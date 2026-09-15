@@ -102,3 +102,8 @@ impl ContractClient for SorobanContractClient {
                     .json()
                     .await
                     .map_err(|e| AppError::Upstream(e.to_string()))?;
+
+                Ok(parsed.tx_hash)
+            })
+            .await
+    }
