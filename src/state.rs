@@ -46,3 +46,15 @@ impl AppState {
             .iter()
             .map(|(key, tenant)| Ok((key.clone(), Uuid::parse_str(tenant)?)))
             .collect::<anyhow::Result<HashMap<_, _>>>()?;
+
+        Ok(Self {
+            admin_api_keys: Arc::new(config.admin_api_keys.clone()),
+            tenant_api_keys: Arc::new(tenant_api_keys),
+            db,
+            idempotency,
+            horizon: Arc::new(horizon),
+            contracts,
+            rate_limiter,
+        })
+    }
+}
