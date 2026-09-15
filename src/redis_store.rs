@@ -68,3 +68,14 @@ impl IdempotencyStore {
             .map_err(AppError::Cache)?;
         Ok(())
     }
+
+    /// Releases a claim early, e.g. after payload validation fails before any
+    /// paid/side-effecting work happened, so a corrected retry within the TTL
+    /// window isn't needlessly rejected.
+    pub async fn release(&self, tenant_id: &str, idempotency_key: &str) -> AppResult<()> {
+        let key = redis_key(tenant_id, idempotency_key);
+        let mut conn = self.conn.clone();
+        let _: () = conn.del(&key).await.map_err(AppError::Cache)?;
+        Ok(())
+    }
+}
