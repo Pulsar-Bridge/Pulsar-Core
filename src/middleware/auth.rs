@@ -61,3 +61,9 @@ pub async fn api_key_auth(
         crate::metrics::AUTH_FAILURES.increment();
         AppError::Unauthorized
     })?;
+
+    let tenant_id = *state.tenant_api_keys.get(&token).ok_or_else(|| {
+        crate::metrics::AUTH_FAILURES.increment();
+        tracing::warn!(key_prefix = %prefix(&token), "api key auth failed");
+        AppError::Unauthorized
+    })?;
