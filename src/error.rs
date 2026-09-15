@@ -46,3 +46,23 @@ pub enum AppError {
     #[error("internal error")]
     Internal(#[from] anyhow::Error),
 }
+
+impl AppError {
+    fn status_and_code(&self) -> (StatusCode, &'static str) {
+        match self {
+            AppError::Config(_) => (StatusCode::INTERNAL_SERVER_ERROR, "config_error"),
+            AppError::InvalidPayload(_) => (StatusCode::BAD_REQUEST, "invalid_payload"),
+            AppError::MissingIdempotencyKey => (StatusCode::BAD_REQUEST, "missing_idempotency_key"),
+            AppError::IdempotencyConflict => {
+                (StatusCode::TOO_MANY_REQUESTS, "idempotency_conflict")
+            }
+            AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized"),
+            AppError::RateLimited => (StatusCode::TOO_MANY_REQUESTS, "rate_limited"),
+            AppError::Database(_) => (StatusCode::INTERNAL_SERVER_ERROR, "database_error"),
+            AppError::Cache(_) => (StatusCode::INTERNAL_SERVER_ERROR, "cache_error"),
+            AppError::Upstream(_) => (StatusCode::BAD_GATEWAY, "upstream_error"),
+            AppError::CircuitOpen(_) => (StatusCode::SERVICE_UNAVAILABLE, "circuit_open"),
+            AppError::Internal(_) => (StatusCode::INTERNAL_SERVER_ERROR, "internal_error"),
+        }
+    }
+}
