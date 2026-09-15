@@ -90,3 +90,10 @@ impl ContractClient for SorobanContractClient {
                     .send()
                     .await
                     .map_err(|e| AppError::Upstream(e.to_string()))?;
+
+                if !resp.status().is_success() {
+                    return Err(AppError::Upstream(format!(
+                        "contract rpc returned {}",
+                        resp.status()
+                    )));
+                }
