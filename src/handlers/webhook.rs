@@ -33,3 +33,25 @@ pub struct WebhookResponse {
     pub status: String,
     pub contract_tx_hash: Option<String>,
 }
+
+fn validate(payload: &WebhookPayload) -> AppResult<BigDecimal> {
+    if payload.external_deposit_id.trim().is_empty() {
+        return Err(AppError::InvalidPayload(
+            "external_deposit_id is required".into(),
+        ));
+    }
+    if payload.asset_code.trim().is_empty() {
+        return Err(AppError::InvalidPayload("asset_code is required".into()));
+    }
+    if payload.stellar_account.len() != 56 || !payload.stellar_account.starts_with('G') {
+        return Err(AppError::InvalidPayload(
+            "stellar_account does not look like a Stellar public key".into(),
+        ));
+    }
+    let amount = BigDecimal::from_str(&payload.amount)
+        .map_err(|_| AppError::InvalidPayload("amount is not a valid decimal".into()))?;
+    if amount <= BigDecimal::from(0) {
+        return Err(AppError::InvalidPayload("amount must be positive".into()));
+    }
+    Ok(amount)
+}
