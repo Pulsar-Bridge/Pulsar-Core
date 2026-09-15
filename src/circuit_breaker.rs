@@ -21,3 +21,14 @@ pub struct CircuitBreaker {
     consecutive_failures: AtomicU32,
     opened_at_unix_secs: AtomicU64,
 }
+
+impl CircuitBreaker {
+    pub fn new(name: impl Into<String>, failure_threshold: u32, reset_after: Duration) -> Self {
+        Self {
+            name: name.into(),
+            failure_threshold,
+            reset_after,
+            consecutive_failures: AtomicU32::new(0),
+            opened_at_unix_secs: AtomicU64::new(0),
+        }
+    }
