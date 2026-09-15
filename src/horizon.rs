@@ -25,3 +25,15 @@ impl HorizonClient {
     pub fn breaker_state(&self) -> crate::circuit_breaker::State {
         self.breaker.state()
     }
+
+    /// Confirms the Horizon endpoint is reachable; used by `/readyz`.
+    pub async fn ping(&self) -> AppResult<()> {
+        self.breaker
+            .call(|| async {
+                let resp = self
+                    .http
+                    .get(format!("{}/", self.base_url))
+                    .timeout(Duration::from_secs(5))
+                    .send()
+                    .await
+                    .map_err(|e| AppError::Upstream(e.to_string()))?;
