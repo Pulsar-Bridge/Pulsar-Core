@@ -53,3 +53,12 @@ impl SorobanContractClient {
         }
     }
 }
+
+#[derive(Serialize)]
+struct RegisterCallbackWireRequest<'a> {
+    tenant_id: &'a str,
+    deposit_id: &'a str,
+    amount: &'a str,
+    asset_code: &'a str,
+    stellar_account: &'a str,
+}
