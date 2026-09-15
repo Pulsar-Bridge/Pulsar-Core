@@ -6,3 +6,8 @@ use std::sync::atomic::{AtomicU64, Ordering};
 /// calls out explicitly: circuit-breaker state, idempotency hit rate, and
 /// partition-job runs.
 pub struct Counter(AtomicU64);
+
+impl Counter {
+    const fn new() -> Self {
+        Self(AtomicU64::new(0))
+    }
