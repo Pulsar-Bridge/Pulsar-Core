@@ -193,3 +193,9 @@ mod tests {
         let p = payload(|p| p.external_deposit_id = "".to_string());
         assert!(validate(&p).is_err());
     }
+
+    #[test]
+    fn rejects_non_decimal_amount() {
+        let p = payload(|p| p.amount = "not-a-number".to_string());
+        assert!(validate(&p).is_err());
+    }
