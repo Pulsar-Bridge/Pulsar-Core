@@ -4,3 +4,16 @@
 path before any handler runs, so they're the trust boundary a
 credential-stuffing or key-guessing run would hit first. Both are rate
 limited the same way:
+
+1. The presented bearer token (or, if none was presented, the client IP from
+   `ConnectInfo`) is checked against a keyed `governor` rate limiter
+   (`AppState::rate_limiter`, quota from `RATE_LIMIT_PER_MINUTE`,
+   default 60/min) **before** the token is validated. This means the limiter
+   throttles guessing attempts themselves, not just successful callers.
+2. On any auth failure — missing token, unknown token, rate limit exceeded —
+   `crate::metrics::AUTH_FAILURES` is incremented and a `tracing::warn!` is
+   emitted with only a key prefix (first 8 chars), never the full credential,
+   so failures are alertable without logging secrets.
+3. `admin_auth` compares candidate keys with a constant-time comparison
+   (`constant_time_eq`) to avoid leaking key content via early-exit string
+   comparison timing.
