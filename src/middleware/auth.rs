@@ -46,3 +46,13 @@ fn check_rate_limit(state: &AppState, key: &str) -> Result<(), AppError> {
 fn prefix(key: &str) -> String {
     key.chars().take(8).collect()
 }
+
+pub async fn api_key_auth(
+    State(state): State<AppState>,
+    mut req: Request,
+    next: Next,
+) -> Result<Response, AppError> {
+    let ip = client_ip(&req);
+    let token = bearer_token(&req).map(str::to_string);
+    let rate_limit_key = token.clone().unwrap_or(ip);
+    check_rate_limit(&state, &rate_limit_key)?;
