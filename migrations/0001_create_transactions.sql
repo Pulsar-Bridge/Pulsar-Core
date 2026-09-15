@@ -32,3 +32,6 @@ CREATE INDEX idx_transactions_tenant_idempotency
 
 CREATE INDEX idx_transactions_tenant_status
     ON transactions (tenant_id, status);
+
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions FORCE ROW LEVEL SECURITY;
