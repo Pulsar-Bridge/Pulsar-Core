@@ -27,3 +27,16 @@ pub struct AppState {
     pub tenant_api_keys: Arc<HashMap<String, Uuid>>,
     pub admin_api_keys: Arc<Vec<String>>,
 }
+
+impl AppState {
+    pub fn new(
+        config: crate::config::Config,
+        db: PgPool,
+        idempotency: IdempotencyStore,
+        horizon: HorizonClient,
+        contracts: Arc<dyn ContractClient>,
+    ) -> anyhow::Result<Self> {
+        let quota = Quota::per_minute(
+            NonZeroU32::new(config.rate_limit_per_minute).unwrap_or(NonZeroU32::new(60).unwrap()),
+        );
+        let rate_limiter = Arc::new(RateLimiter::keyed(quota));
