@@ -46,3 +46,9 @@ tenant isolation), Redis (idempotency), a Stellar Horizon client with a
 circuit breaker.
 
 ## Docs
+
+- `docs/security-design.md` — DB role model, RLS, why it's structured this way
+- `docs/auth-rate-limiting.md` — auth trust boundaries and their rate limits
+- `docs/quota-configuration.md` — current flat rate limiting, planned per-tenant quotas
+- `docs/contract-integration.md` — status of the `register_callback()` integration
+- `sdks/openapi.yaml` — tracks the actually-implemented API surface
