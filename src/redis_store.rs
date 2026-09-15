@@ -79,3 +79,7 @@ impl IdempotencyStore {
         Ok(())
     }
 }
+
+fn redis_key(tenant_id: &str, idempotency_key: &str) -> String {
+    format!("idempotency:{tenant_id}:{idempotency_key}")
+}
