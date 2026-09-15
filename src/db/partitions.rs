@@ -40,3 +40,19 @@ pub async fn run_once(pool: &PgPool, retention_months: u32) -> AppResult<()> {
 
     Ok(())
 }
+
+pub fn spawn_background_job(pool: PgPool, retention_months: u32, tick: Duration) {
+    tokio::spawn(async move {
+        let mut ticker = interval(tick);
+        loop {
+            ticker.tick().await;
+            match run_once(&pool, retention_months).await {
+                Ok(()) => crate::metrics::PARTITION_JOB_RUNS.increment(),
+                Err(err) => {
+                    crate::metrics::PARTITION_JOB_FAILURES.increment();
+                    tracing::error!(error = %err, "partition maintenance job failed");
+                }
+            }
+        }
+    });
+}
