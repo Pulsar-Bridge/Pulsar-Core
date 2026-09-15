@@ -29,3 +29,7 @@ and build against it."*
    Soroban invocation.
 5. Add integration tests against a local Soroban testnet/sandbox once the
    shape is confirmed.
+
+Until then, treat every deposit's `submitted`/`failed` status transition in
+`src/handlers/webhook.rs` as exercising the *retry, error-handling, and
+circuit-breaker plumbing* around this call, not a verified on-chain mirror.
