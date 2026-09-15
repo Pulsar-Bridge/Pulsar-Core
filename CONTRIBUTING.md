@@ -44,3 +44,5 @@ one:
 ```
 sqlx migrate add <name>
 ```
+
+## Commit style
