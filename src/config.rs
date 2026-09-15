@@ -137,3 +137,14 @@ pub async fn assert_not_rls_bypassing(pool: &sqlx::PgPool) -> AppResult<()> {
             .fetch_one(pool)
             .await
             .map_err(AppError::Database)?;
+
+    let (is_superuser, bypasses_rls) = row;
+    if is_superuser || bypasses_rls {
+        return Err(AppError::Config(format!(
+            "the configured DATABASE_URL role has rolsuper={is_superuser} rolbypassrls={bypasses_rls}; \
+             refusing to start with a role that can bypass Row-Level Security. \
+             Use a least-privilege application role instead (see docs/security-design.md)."
+        )));
+    }
+    Ok(())
+}
