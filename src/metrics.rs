@@ -15,3 +15,8 @@ impl Counter {
     pub fn increment(&self) {
         self.0.fetch_add(1, Ordering::Relaxed);
     }
+
+    pub fn get(&self) -> u64 {
+        self.0.load(Ordering::Relaxed)
+    }
+}
