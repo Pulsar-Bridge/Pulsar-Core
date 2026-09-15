@@ -64,3 +64,13 @@ impl Config {
             .filter(|s| !s.is_empty())
             .map(String::from)
             .collect();
+
+        let tenant_api_keys = env_or("TENANT_API_KEYS", "")
+            .split(',')
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .filter_map(|pair| {
+                let (key, tenant) = pair.split_once(':')?;
+                Some((key.to_string(), tenant.to_string()))
+            })
+            .collect();
