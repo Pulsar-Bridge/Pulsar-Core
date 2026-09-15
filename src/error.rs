@@ -66,3 +66,7 @@ impl AppError {
         }
     }
 }
+
+impl IntoResponse for AppError {
+    fn into_response(self) -> Response {
+        let (status, code) = self.status_and_code();
