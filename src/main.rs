@@ -59,3 +59,6 @@ async fn main() -> anyhow::Result<()> {
         config.horizon_circuit_breaker_failure_threshold,
         config.horizon_circuit_breaker_reset_after,
     ));
+
+    let bind_addr: SocketAddr = config.bind_addr.parse()?;
+    let state = AppState::new(config, db, idempotency, horizon, contracts)?;
