@@ -95,3 +95,8 @@ BEGIN
     END LOOP;
 END;
 $$;
+
+-- Bootstrap the current and next month so the service has somewhere to write
+-- immediately after migrating, before the background job's first tick.
+SELECT ensure_transactions_partition(date_trunc('month', now())::date);
+SELECT ensure_transactions_partition((date_trunc('month', now()) + interval '1 month')::date);
