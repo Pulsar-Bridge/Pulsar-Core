@@ -44,3 +44,14 @@ pub async fn readyz(State(state): State<AppState>) -> impl IntoResponse {
         })),
     )
 }
+
+pub async fn metrics() -> impl IntoResponse {
+    (
+        StatusCode::OK,
+        [(
+            axum::http::header::CONTENT_TYPE,
+            "text/plain; version=0.0.4",
+        )],
+        crate::metrics::render(),
+    )
+}
