@@ -98,3 +98,70 @@ paths:
       responses:
         '200':
           description: OK
+
+components:
+  securitySchemes:
+    tenantApiKey:
+      type: http
+      scheme: bearer
+    adminApiKey:
+      type: http
+      scheme: bearer
+  schemas:
+    WebhookPayload:
+      type: object
+      required: [external_deposit_id, amount, asset_code, stellar_account]
+      properties:
+        external_deposit_id:
+          type: string
+        amount:
+          type: string
+          description: Decimal string, e.g. "10.5000000"
+        asset_code:
+          type: string
+        stellar_account:
+          type: string
+          description: Stellar public key (G...), 56 characters
+    WebhookResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, submitted, confirmed, failed]
+        contract_tx_hash:
+          type: string
+          nullable: true
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        tenant_id:
+          type: string
+          format: uuid
+        idempotency_key:
+          type: string
+        external_deposit_id:
+          type: string
+          nullable: true
+        status:
+          type: string
+        amount:
+          type: string
+        asset_code:
+          type: string
+        stellar_account:
+          type: string
+        contract_tx_hash:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
