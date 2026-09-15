@@ -67,3 +67,7 @@ fn add_months(d: NaiveDate, months: i32) -> NaiveDate {
     let month = total.rem_euclid(12) + 1;
     NaiveDate::from_ymd_opt(year, month as u32, 1).expect("valid date")
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
