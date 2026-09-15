@@ -14,3 +14,11 @@ use crate::state::AppState;
 pub struct TenantContext {
     pub tenant_id: Uuid,
 }
+
+fn bearer_token(req: &Request) -> Option<&str> {
+    req.headers()
+        .get(axum::http::header::AUTHORIZATION)?
+        .to_str()
+        .ok()?
+        .strip_prefix("Bearer ")
+}
