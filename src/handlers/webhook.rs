@@ -187,3 +187,9 @@ mod tests {
         let p = payload(|_| {});
         assert!(validate(&p).is_ok());
     }
+
+    #[test]
+    fn rejects_empty_deposit_id() {
+        let p = payload(|p| p.external_deposit_id = "".to_string());
+        assert!(validate(&p).is_err());
+    }
