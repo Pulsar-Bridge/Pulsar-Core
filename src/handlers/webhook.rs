@@ -79,3 +79,5 @@ pub async fn handle(
     if matches!(claim, Claim::AlreadyClaimed) {
         return Err(AppError::IdempotencyConflict);
     }
+
+    let insert_result = insert_and_submit(&state, tenant, &idempotency_key, &payload, amount).await;
