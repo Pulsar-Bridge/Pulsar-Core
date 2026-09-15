@@ -20,3 +20,9 @@ pub async fn healthz() -> impl IntoResponse {
 pub async fn readyz(State(state): State<AppState>) -> impl IntoResponse {
     let db_ok = sqlx::query("SELECT 1").execute(&state.db).await.is_ok();
     let redis_ok = state.idempotency.ping().await.is_ok();
+
+    // Only actually probe Horizon when its breaker isn't already open — no
+    // point paying the latency of a call we know will be rejected.
+    let horizon_breaker_ok = state.horizon.breaker_state() != BreakerState::Open;
+    let horizon_ok = horizon_breaker_ok && state.horizon.ping().await.is_ok();
+    let contract_breaker_ok = state.contracts.breaker_state() != BreakerState::Open;
