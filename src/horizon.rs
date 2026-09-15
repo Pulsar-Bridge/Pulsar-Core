@@ -12,3 +12,12 @@ pub struct HorizonClient {
     base_url: String,
     breaker: CircuitBreaker,
 }
+
+impl HorizonClient {
+    pub fn new(base_url: String, failure_threshold: u32, reset_after: Duration) -> Self {
+        Self {
+            http: reqwest::Client::new(),
+            base_url,
+            breaker: CircuitBreaker::new("horizon", failure_threshold, reset_after),
+        }
+    }
