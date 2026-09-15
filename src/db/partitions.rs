@@ -56,3 +56,7 @@ pub fn spawn_background_job(pool: PgPool, retention_months: u32, tick: Duration)
         }
     });
 }
+
+fn first_of_month(d: NaiveDate) -> NaiveDate {
+    NaiveDate::from_ymd_opt(d.year(), d.month(), 1).expect("valid date")
+}
