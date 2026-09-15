@@ -103,3 +103,15 @@ async fn insert_and_submit(
     amount: BigDecimal,
 ) -> AppResult<(StatusCode, Json<WebhookResponse>)> {
     let mut tx = db::begin_tenant_scoped(&state.db, tenant.tenant_id).await?;
+
+    if let Some(existing) = transactions::find_by_idempotency_key(&mut tx, idempotency_key).await? {
+        tx.commit().await.map_err(AppError::Database)?;
+        return Ok((
+            StatusCode::OK,
+            Json(WebhookResponse {
+                id: existing.id,
+                status: existing.status,
+                contract_tx_hash: existing.contract_tx_hash,
+            }),
+        ));
+    }
