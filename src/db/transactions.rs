@@ -58,3 +58,22 @@ pub async fn insert_pending(
     .await
     .map_err(AppError::Database)
 }
+
+pub async fn mark_submitted(
+    tx: &mut Transaction<'_, Postgres>,
+    id: Uuid,
+    created_at: DateTime<Utc>,
+    contract_tx_hash: &str,
+) -> AppResult<()> {
+    sqlx::query(
+        "UPDATE transactions SET status = 'submitted', contract_tx_hash = $3
+         WHERE id = $1 AND created_at = $2",
+    )
+    .bind(id)
+    .bind(created_at)
+    .bind(contract_tx_hash)
+    .execute(&mut **tx)
+    .await
+    .map_err(AppError::Database)?;
+    Ok(())
+}
