@@ -1,0 +1,3 @@
+# Base topology: postgres, redis, and the relay. Environment-specific
+# compose files extend this one — don't duplicate it, run e.g.:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
