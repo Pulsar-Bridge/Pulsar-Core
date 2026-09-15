@@ -64,3 +64,15 @@ impl CircuitBreaker {
             }
         }
     }
+
+    /// Runs `f` if the breaker is Closed or HalfOpen (one probe at a time in
+    /// practice is not strictly enforced here — acceptable for this relay's
+    /// traffic shape; see docs/security-design.md if that changes).
+    pub async fn call<T, F, Fut>(&self, f: F) -> Result<T, AppError>
+    where
+        F: FnOnce() -> Fut,
+        Fut: std::future::Future<Output = Result<T, AppError>>,
+    {
+        if self.state() == State::Open {
+            return Err(AppError::CircuitOpen(self.name.clone()));
+        }
