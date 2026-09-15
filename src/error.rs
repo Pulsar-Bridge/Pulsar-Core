@@ -36,3 +36,6 @@ pub enum AppError {
 
     #[error("cache error")]
     Cache(#[from] redis::RedisError),
+
+    #[error("upstream horizon/contract call failed: {0}")]
+    Upstream(String),
